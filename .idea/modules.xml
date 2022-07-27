@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ud801_xyz-reader-starter-code.iml" filepath="$PROJECT_DIR$/.idea/modules/ud801_xyz-reader-starter-code.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.iml" filepath="$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.main.iml" filepath="$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/XYZReader/ud801_xyz-reader-starter-code.XYZReader.unitTest.iml" />
+    </modules>
+  </component>
+</project>
