@@ -1,27 +1,104 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    >
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/activity_article_list__app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="168dp"
+        app:liftOnScroll="true"
+        android:background="?colorPrimary"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/activity_article_list__collapsing_toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:expandedTitleMarginStart="72dp"
+            app:expandedTitleMarginBottom="28dp"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:title="@string/page_title"
+            >
+            <!--
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            -->
+
+
+
+            <ImageView
+                android:id="@+id/activity_article_list_books_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/books_g52abbdc89_1920"
+                android:scaleType="centerCrop"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="parallax"
+                />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_logo_adobe_express"
+                android:scaleType="fitEnd"
+                android:fitsSystemWindows="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginTop="0dp"
+                />
+
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:menu="@menu/main"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="@string/page_title"
+                style="@style/Theme.Bacon.Widget.Toolbar"
+                />
+                <!--
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+
+
+                app:navigationIcon="@drawable/ic_baseline_menu_24"
+
+                -->
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/swipe_refresh_layout"
+        app:layout_anchorGravity="center"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:scrollbarStyle="outsideOverlay"
-            android:paddingTop="116dp"
             android:paddingLeft="@dimen/list_side_margin"
+            android:paddingTop="116dp"
             android:paddingRight="@dimen/list_side_margin"
-            android:paddingBottom="28dp" />
+            android:paddingBottom="28dp"
+            android:scrollbarStyle="outsideOverlay" />
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <FrameLayout
+
+    <!--FrameLayout
         android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
         android:layout_height="112dp"
@@ -44,6 +121,6 @@
                 android:contentDescription="@string/app_name" />
 
         </androidx.appcompat.widget.Toolbar>
-    </FrameLayout>
+    </FrameLayout-->
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

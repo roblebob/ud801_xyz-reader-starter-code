@@ -16,10 +16,26 @@
 -->
 
 <resources>
-    <color name="photo_placeholder">#ccc</color>
+    <!--color name="photo_placeholder">#ccc</color-->
+    <color name="photo_placeholder">#000000</color>
 
     <color name="theme_primary">#04561A</color>
+    <color name="theme_my_ass">#A0FFFFFF</color>
     <color name="theme_primary_dark">#04561A</color>
     <color name="theme_accent">#04561A</color>
     <color name="ltgray">#ffe0e0e0</color>
+
+
+
+
+
+    <!--
+        colors are derived using https://color.adobe.com/create/image, extracting theme colors from
+        the image within the appbar
+     -->
+    <color name="my001">#565659</color>
+    <color name="my002">#BF9D5E</color>
+    <color name="my003">#A68B6A</color>
+    <color name="my004">#A0733C1D</color>
+    <color name="my005">#400101</color>
 </resources>

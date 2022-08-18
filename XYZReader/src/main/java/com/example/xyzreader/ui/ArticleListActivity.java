@@ -26,6 +26,8 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,10 +59,28 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.topAppBar);
 
+        /* ... not used anyway
 
         final View toolbarContainerView = findViewById(R.id.toolbar_container);
+        */
+
+        //((CollapsingToolbarLayout) findViewById(R.id.activity_article_list__collapsing_toolbar_layout)).setTitle("ScreenTitle");
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        AppBarLayout appBarLayout = findViewById(R.id.activity_article_list__app_bar_layout);
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+            float alpha = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
+            Log.e(TAG, "----> " + verticalOffset + "  " + alpha );
+            appBarLayout1.setAlpha(alpha);
+            recyclerView.setAlpha(1.0f - alpha * 0.8f);
+            //mToolbar.setAlpha(1-alpha);
+        });
+
+
+
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
@@ -126,6 +146,8 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         mRecyclerView.setAdapter(null);
     }
 
+
+
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
 
@@ -143,13 +165,8 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
-                }
-            });
+            view.setOnClickListener(view1 -> startActivity(new Intent(Intent.ACTION_VIEW,
+                    ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition())))));
             return vh;
         }
 
@@ -169,21 +186,31 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
             Date publishedDate = parsePublishedDate();
-            if (!publishedDate.before(START_OF_EPOCH.getTime())) {
 
-                holder.subtitleView.setText(Html.fromHtml(
-                        DateUtils.getRelativeTimeSpanString(
-                                publishedDate.getTime(),
-                                System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_ALL).toString()
-                                + "<br/>" + " by "
-                                + mCursor.getString(ArticleLoader.Query.AUTHOR)));
-            } else {
-                holder.subtitleView.setText(Html.fromHtml(
-                        outputFormat.format(publishedDate)
-                        + "<br/>" + " by "
-                        + mCursor.getString(ArticleLoader.Query.AUTHOR)));
-            }
+//            if (!publishedDate.before(START_OF_EPOCH.getTime())) {
+//
+//                holder.subtitleView.setText(
+//                        Html.fromHtml(
+//                        DateUtils.getRelativeTimeSpanString(
+//                                publishedDate.getTime(),
+//                                System.currentTimeMillis(),
+//                                DateUtils.HOUR_IN_MILLIS,
+//                                DateUtils.FORMAT_ABBREV_ALL
+//                            ).toString()
+//                            + "<br/>" + " by "
+//                                + mCursor.getString(ArticleLoader.Query.AUTHOR)));
+//            } else {
+//                holder.subtitleView.setText(
+//                        Html.fromHtml(
+//                            outputFormat.format(publishedDate)
+//                            + "<br/>" + " by "
+//                            + mCursor.getString(ArticleLoader.Query.AUTHOR)
+//                        )
+//                );
+//            }
+            String string = mCursor.getString(ArticleLoader.Query.AUTHOR) + " " + "(" + publishedDate.getYear() + ")";
+            holder.subtitleView.setText(string);
+
             holder.thumbnailView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
