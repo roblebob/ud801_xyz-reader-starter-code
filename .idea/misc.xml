@@ -12,7 +12,7 @@
         <entry key="XYZReader/src/main/res/drawable/white_selectable_item_background_circle.xml" value="0.1155" />
         <entry key="XYZReader/src/main/res/layout/activity_article_detail.xml" value="0.15806159420289856" />
         <entry key="XYZReader/src/main/res/layout/activity_article_list.xml" value="0.21481481481481482" />
-        <entry key="XYZReader/src/main/res/layout/fragment_article_detail.xml" value="0.15806159420289856" />
+        <entry key="XYZReader/src/main/res/layout/fragment_article_detail.xml" value="0.1" />
         <entry key="XYZReader/src/main/res/layout/list_item_article.xml" value="0.11296296296296296" />
         <entry key="XYZReader/src/main/res/menu/main.xml" value="0.36041666666666666" />
       </map>

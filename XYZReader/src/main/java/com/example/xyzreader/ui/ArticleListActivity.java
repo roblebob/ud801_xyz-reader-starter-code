@@ -15,8 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.appcompat.widget.Toolbar;
-import android.text.Html;
-import android.text.format.DateUtils;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,6 +51,9 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+
+
+    private SimpleDateFormat mOutputFormatYear = new SimpleDateFormat("yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,8 +186,9 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         public void onBindViewHolder(ViewHolder holder, int position) {
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            Date publishedDate = parsePublishedDate();
 
+
+            Date publishedDate = parsePublishedDate();
 //            if (!publishedDate.before(START_OF_EPOCH.getTime())) {
 //
 //                holder.subtitleView.setText(
@@ -208,8 +210,10 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 //                        )
 //                );
 //            }
-            String string = mCursor.getString(ArticleLoader.Query.AUTHOR) + " " + "(" + publishedDate.getYear() + ")";
-            holder.subtitleView.setText(string);
+
+            holder.yearView.setText(mOutputFormatYear.format(publishedDate));
+
+            holder.authorView.setText(mCursor.getString(ArticleLoader.Query.AUTHOR));
 
             holder.thumbnailView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
@@ -226,13 +230,15 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public DynamicHeightNetworkImageView thumbnailView;
         public TextView titleView;
-        public TextView subtitleView;
+        public TextView authorView;
+        public TextView yearView;
 
         public ViewHolder(View view) {
             super(view);
             thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
-            titleView = (TextView) view.findViewById(R.id.article_title);
-            subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+            titleView = (TextView) view.findViewById(R.id.list_item_article__title_tv);
+            authorView = (TextView) view.findViewById(R.id.list_item_article__author_tv);
+            yearView = view.findViewById(R.id.list_item_article__year_tv);
         }
     }
 }

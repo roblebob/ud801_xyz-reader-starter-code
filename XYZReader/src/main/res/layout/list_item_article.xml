@@ -30,21 +30,38 @@
 
 
 
+        <TextView
+            android:gravity="end"
+            android:id="@+id/list_item_article__author_tv"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="4dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="0dp"
+            android:paddingTop="12dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:alpha="0.5"
+            />
+        <!--
+            android:textColor="#6000"
+        -->
+
 
 
         <TextView
-            android:id="@+id/article_title"
+            android:id="@+id/list_item_article__title_tv"
             style="@style/TextAppearance.AppCompat.Subhead"
+            android:gravity="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingTop="16dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="4dp"
-            android:textColor="@color/theme_primary"
+            android:paddingStart="0dp"
+            android:paddingTop="0dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="0dp"
             android:ellipsize="end"
-            android:maxLines="4"
-            android:minLines="2"
+            android:maxLines="2"
             />
             <!--
             android:textColor="@color/ltgray"
@@ -53,16 +70,18 @@
 
 
         <TextView
-            android:id="@+id/article_subtitle"
+            android:id="@+id/list_item_article__year_tv"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="16dp"
-            android:textColor="#6000"
-            android:maxLines="2"
-            android:ellipsize="end" />
+            android:paddingStart="4dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:alpha="0.4"
+            />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
