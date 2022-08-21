@@ -21,11 +21,15 @@
         <item name="colorPrimary">@color/my004</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="colorOnPrimary">@color/theme_my_ass</item>
+        <item name="colorAccent">@color/my006</item>
 
     </style>
 
     <style name="Theme.Bacon.Detail">
         <item name="android:statusBarColor">@android:color/transparent</item>
+ 
+
+
     </style>
 
 

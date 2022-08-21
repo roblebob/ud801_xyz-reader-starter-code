@@ -72,6 +72,7 @@
         <TextView
             android:id="@+id/list_item_article__year_tv"
             style="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="13sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="4dp"
