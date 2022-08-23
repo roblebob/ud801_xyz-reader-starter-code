@@ -1,6 +1,8 @@
 [picture used](https://pixabay.com/illustrations/books-library-education-knowledge-5430104/)
 
-
+[Advice from knowledge base](https://knowledge.udacity.com/questions/45466) is applied by which texts shown in the DetailsActivity are shortened.
+[alternative resource link given in answer](https://knowledge.udacity.com/questions/42148)
+[link itself](https://raw.githubusercontent.com/SuperAwesomeness/XYZReader/master/data.json)
 
 
 

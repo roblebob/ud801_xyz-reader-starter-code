@@ -35,7 +35,7 @@
 
 
     <style name="Theme.Bacon.Widget.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="background">?attr/colorPrimary</item>
+        <item name="background">@android:color/transparent</item>
         <item name="titleTextColor">@color/my005</item>
     </style>
 

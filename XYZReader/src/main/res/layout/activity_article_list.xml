@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="168dp"
         app:liftOnScroll="true"
-        android:background="?colorPrimary"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         >
@@ -64,12 +63,11 @@
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:title="@string/page_title"
-                style="@style/Theme.Bacon.Widget.Toolbar"
                 />
                 <!--
+                style="@style/Theme.Bacon.Widget.Toolbar"
+
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-
-
                 app:navigationIcon="@drawable/ic_baseline_menu_24"
 
                 -->
