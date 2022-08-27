@@ -43,6 +43,10 @@ public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // TODO
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {postponeEnterTransition();}
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -107,7 +111,12 @@ public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivi
                 mSelectedItemId = mStartId;
             }
         }
+
+
     }
+
+
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

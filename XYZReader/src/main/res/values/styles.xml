@@ -23,6 +23,11 @@
         <item name="colorOnPrimary">@color/theme_my_ass</item>
         <item name="colorAccent">@color/my006</item>
 
+        <item name="android:windowActivityTransitions">true</item>
+
+        <!--item name="android:windowEnterTransition">@transition/fade</item-->
+        <!--item name="android:windowExitTransition">@transition/slide_right</item-->
+
     </style>
 
     <style name="Theme.Bacon.Detail">

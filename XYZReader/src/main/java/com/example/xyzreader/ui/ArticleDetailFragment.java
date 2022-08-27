@@ -16,7 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ShareCompat;
 import androidx.palette.graphics.Palette;
 import android.text.Html;
@@ -111,6 +115,7 @@ public class ArticleDetailFragment extends Fragment implements
         getLoaderManager().initLoader(0, null, this);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -153,8 +158,13 @@ public class ArticleDetailFragment extends Fragment implements
 
         bindViews();
         updateStatusBar();
+
+
+
         return mRootView;
     }
+
+
 
     private void updateStatusBar() {
         int color = 0;
@@ -257,6 +267,7 @@ public class ArticleDetailFragment extends Fragment implements
 
                         }
                     });
+            mPhotoView.setTransitionName(mCursor.getString(ArticleLoader.Query.TITLE));
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
@@ -287,6 +298,9 @@ public class ArticleDetailFragment extends Fragment implements
         }
 
         bindViews();
+
+        // TODO
+        // getActivityCast().startPostponedEnterTransition();
     }
 
     @Override

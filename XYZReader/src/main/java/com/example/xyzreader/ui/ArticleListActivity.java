@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui;
 
+import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 //import androidx.appcompat.app.ActionBarActivity;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.appcompat.widget.Toolbar;
 
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +58,13 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
     private SimpleDateFormat mOutputFormatYear = new SimpleDateFormat("yyyy");
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
+
+
 
         //mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar = (Toolbar) findViewById(R.id.topAppBar);
@@ -70,13 +76,13 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
         //((CollapsingToolbarLayout) findViewById(R.id.activity_article_list__collapsing_toolbar_layout)).setTitle("ScreenTitle");
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         AppBarLayout appBarLayout = findViewById(R.id.activity_article_list__app_bar_layout);
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             float alpha = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
             Log.e(TAG, "----> " + verticalOffset + "  " + alpha );
             appBarLayout1.setAlpha(alpha);
-            recyclerView.setAlpha(1.0f - alpha * 0.8f);
+            mRecyclerView.setAlpha(1.0f - alpha * 0.8f);
             //mToolbar.setAlpha(1-alpha);
         });
 
@@ -85,12 +91,14 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
             refresh();
         }
+
+
     }
 
     private void refresh() {
@@ -133,7 +141,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Adapter adapter = new Adapter(cursor);
+        Adapter adapter = new Adapter(cursor, this);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
@@ -151,9 +159,11 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
+        private Context mContext;
 
-        public Adapter(Cursor cursor) {
+        public Adapter(Cursor cursor, Context context) {
             mCursor = cursor;
+            mContext = context;
         }
 
         @Override
@@ -162,13 +172,11 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
             return mCursor.getLong(ArticleLoader.Query._ID);
         }
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            final ViewHolder vh = new ViewHolder(view);
-            view.setOnClickListener(view1 -> startActivity(new Intent(Intent.ACTION_VIEW,
-                    ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition())))));
-            return vh;
+            return new ViewHolder(view);
         }
 
         private Date parsePublishedDate() {
@@ -219,6 +227,26 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+
+            holder.thumbnailView.setTransitionName(mCursor.getString(ArticleLoader.Query.TITLE));
+
+            holder.itemView.setOnClickListener(view1 -> {
+                if (mContext instanceof ArticleListActivity) {
+                    mContext.startActivity(
+                            new Intent(
+                                    Intent.ACTION_VIEW,
+                                    ItemsContract.Items.buildItemUri(getItemId(position))
+                            ),
+                            ActivityOptions
+                                    .makeSceneTransitionAnimation(
+                                            (ArticleListActivity)mContext,
+                                            holder.thumbnailView,
+                                            holder.thumbnailView.getTransitionName()
+                                    )
+                                    .toBundle()
+                    );
+                }
+            });
         }
 
         @Override
@@ -241,4 +269,5 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
             yearView = view.findViewById(R.id.list_item_article__year_tv);
         }
     }
+
 }
