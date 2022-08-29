@@ -45,7 +45,7 @@ public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivi
         super.onCreate(savedInstanceState);
 
         // TODO
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {postponeEnterTransition();}
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {postponeEnterTransition();}
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -88,7 +88,8 @@ public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivi
         mUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onSupportNavigateUp();
+                //onSupportNavigateUp();
+                onBackPressed();
             }
         });
 

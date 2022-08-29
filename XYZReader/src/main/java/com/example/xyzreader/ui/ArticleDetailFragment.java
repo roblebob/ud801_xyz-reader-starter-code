@@ -300,7 +300,7 @@ public class ArticleDetailFragment extends Fragment implements
         bindViews();
 
         // TODO
-        // getActivityCast().startPostponedEnterTransition();
+        getActivityCast().startPostponedEnterTransition();
     }
 
     @Override
