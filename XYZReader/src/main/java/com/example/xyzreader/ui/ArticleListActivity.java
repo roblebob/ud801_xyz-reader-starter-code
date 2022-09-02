@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.appcompat.widget.Toolbar;
 
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,41 +63,26 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-
-
-        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar = (Toolbar) findViewById(R.id.topAppBar);
-
-        /* ... not used anyway
-
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
-        */
-
-        //((CollapsingToolbarLayout) findViewById(R.id.activity_article_list__collapsing_toolbar_layout)).setTitle("ScreenTitle");
-
+        mToolbar = (Toolbar) findViewById(R.id.activity_article_list__toolbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         AppBarLayout appBarLayout = findViewById(R.id.activity_article_list__app_bar_layout);
+
+
+
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             float alpha = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
             Log.e(TAG, "----> " + verticalOffset + "  " + alpha );
             appBarLayout1.setAlpha(alpha);
             mRecyclerView.setAlpha(1.0f - alpha * 0.8f);
-            //mToolbar.setAlpha(1-alpha);
         });
 
-
-
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-
 
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
             refresh();
         }
-
-
     }
 
     private void refresh() {
