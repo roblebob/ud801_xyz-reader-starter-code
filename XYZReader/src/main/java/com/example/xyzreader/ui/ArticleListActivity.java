@@ -49,6 +49,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         unregisterReceiver(mRefreshingReceiver);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     private boolean mIsRefreshing = false;
 
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
@@ -102,21 +104,27 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 updateRefreshingUI();
+                Log.e("--------------->", "onReceive()" + "    -------->   mIsRefreshing: " + mIsRefreshing);
             }
         }
     };
+
 
     private void updateRefreshingUI() {
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.e(TAG, "------> onCreateLoader()");
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.e(TAG, "------> onLoadFinished()");
         ArticleListAdapter adapter = new ArticleListAdapter(cursor, this);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
@@ -128,6 +136,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.e(TAG, "------> onLoaderReset()");
         mRecyclerView.setAdapter(null);
     }
 
