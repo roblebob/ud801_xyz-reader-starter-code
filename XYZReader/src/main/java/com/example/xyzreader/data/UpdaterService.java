@@ -22,11 +22,8 @@ import java.util.ArrayList;
 
 public class UpdaterService extends IntentService {
     private static final String TAG = "UpdaterService";
-
-    public static final String BROADCAST_ACTION_STATE_CHANGE
-            = "com.example.xyzreader.intent.action.STATE_CHANGE";
-    public static final String EXTRA_REFRESHING
-            = "com.example.xyzreader.intent.extra.REFRESHING";
+    public static final String BROADCAST_ACTION_STATE_CHANGE = "com.example.xyzreader.intent.action.STATE_CHANGE";
+    public static final String EXTRA_REFRESHING = "com.example.xyzreader.intent.extra.REFRESHING";
 
     public UpdaterService() {
         super(TAG);
@@ -52,7 +49,10 @@ public class UpdaterService extends IntentService {
         Uri dirUri = ItemsContract.Items.buildDirUri();
 
         // Delete all items
-        cpo.add(ContentProviderOperation.newDelete(dirUri).build());
+        cpo.add(  ContentProviderOperation
+                .newDelete( dirUri)
+                .build()
+        );
 
         try {
             JSONArray array = RemoteEndpointUtil.fetchJsonArray();
