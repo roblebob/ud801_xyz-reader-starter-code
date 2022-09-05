@@ -36,14 +36,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
 
-
     private SimpleDateFormat mOutputFormatYear = new SimpleDateFormat("yyyy");
-
-
-
-
-
-
 
     private Cursor mCursor;
     private Context mContext;
@@ -51,6 +44,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     public ArticleListAdapter(Cursor cursor, Context context) {
         mCursor = cursor;
         mContext = context;
+        this.setHasStableIds(true);
     }
 
 

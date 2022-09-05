@@ -57,8 +57,16 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         setContentView(R.layout.activity_article_list);
 
         mToolbar = (Toolbar) findViewById(R.id.activity_article_list__toolbar);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         AppBarLayout appBarLayout = findViewById(R.id.activity_article_list__app_bar_layout);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        mRecyclerView .setLayoutManager(
+                new StaggeredGridLayoutManager(
+                        getResources().getInteger( R.integer.list_column_count),
+                        StaggeredGridLayoutManager.VERTICAL
+                )
+        );
 
 
 
@@ -125,13 +133,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Log.e(TAG, "------> onLoadFinished()");
-        ArticleListAdapter adapter = new ArticleListAdapter(cursor, this);
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-        StaggeredGridLayoutManager sglm =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(sglm);
+        mRecyclerView.setAdapter( new ArticleListAdapter(cursor, this));
     }
 
     @Override
