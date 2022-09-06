@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 //import androidx.appcompat.app.ActionBarActivity;
@@ -17,6 +18,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.adapter.ArticleListAdapter;
@@ -42,6 +46,9 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getLoaderManager().initLoader(0, null, this);
+
+
         binding = ActivityArticleListBinding.inflate( getLayoutInflater());
         setContentView( binding.getRoot());
 
@@ -63,15 +70,15 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
             }
         });
 
-
-        getLoaderManager().initLoader(0, null, this);
-
         if (savedInstanceState == null) {
             refresh();
         }
+
+        setSupportActionBar(binding.toolbar);
     }
 
     private void refresh() {
+        Log.e(TAG, "------> refresh()");
         startService(new Intent(this, UpdaterService.class));
     }
 
@@ -88,6 +95,8 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         unregisterReceiver(mRefreshingReceiver);
     }
 
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private boolean mIsRefreshing = false;
 
@@ -95,7 +104,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
-                mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
+                mIsRefreshing = intent.getBooleanExtra( UpdaterService.EXTRA_REFRESHING, false);
                 updateRefreshingUI();
             }
         }
@@ -103,6 +112,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
 
     private void updateRefreshingUI() {
+        Log.e(TAG, "------> updateRefreshingUI()");
         binding.swipeRefreshLayout .setRefreshing(mIsRefreshing);
     }
 
@@ -124,6 +134,29 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.e(TAG, "------> onLoaderReset()");
         binding.recyclerView.setAdapter(null);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        Log.e(TAG, "------> onCreateOptionsMenu(...)");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Log.e(TAG, "------> onOptionsItemSelected(...)");
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                refresh();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }
