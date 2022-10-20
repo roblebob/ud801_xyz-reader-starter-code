@@ -100,7 +100,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private boolean mIsRefreshing = false;
 
-    private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
@@ -159,4 +159,13 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // just a test, or better even before that
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        //postponeEnterTransition();
+    }
 }
