@@ -61,9 +61,9 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
 
         binding.appBarLayout .addOnOffsetChangedListener( (appBarLayout1, verticalOffset) -> {
             float alpha = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
-            //Log.e(TAG, "----> " + verticalOffset + "  " + alpha );
+            Log.e(TAG, "----> " + verticalOffset + "  " + alpha );
             appBarLayout1.setAlpha(alpha);
-            binding.recyclerView.setAlpha( 1.0f - alpha * 0.8f);
+            binding.recyclerView.setAlpha( 1.0f - alpha);
 
             if (!mIsRefreshing && binding.swipeRefreshLayout.isRefreshing()) {
                 updateRefreshingUI();
@@ -103,8 +103,8 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
-                mIsRefreshing = intent.getBooleanExtra( UpdaterService.EXTRA_REFRESHING, false);
+            if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals( intent.getAction())) {
+                mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 updateRefreshingUI();
             }
         }

@@ -17,8 +17,10 @@
 
 <resources>
 
-    <style name="Theme.Bacon" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.XYZReader" parent="@style/Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/my004</item>
+        <item name="colorPrimaryVariant">@color/my004</item>
+
         <item name="android:windowTranslucentStatus">true</item>
         <item name="colorOnPrimary">@color/theme_my_ass</item>
         <item name="colorAccent">@color/my006</item>
@@ -28,9 +30,11 @@
         <!--item name="android:windowEnterTransition">@transition/fade</item-->
         <!--item name="android:windowExitTransition">@transition/slide_right</item-->
 
+
+
     </style>
 
-    <style name="Theme.Bacon.Detail">
+    <style name="Theme.XYZReader.Detail">
         <item name="android:statusBarColor">@android:color/transparent</item>
  
 
@@ -48,7 +52,7 @@
 
 
 
-    <style name="TextAppearance.App.CollapsingToolbar.Expanded" parent="TextAppearance.MaterialComponents.Headline5">
+    <style name="TextAppearance.App.CollapsingToolbar.Expanded" parent="TextAppearance.MaterialComponents.Headline3">
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 

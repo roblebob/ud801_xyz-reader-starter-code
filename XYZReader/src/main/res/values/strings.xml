@@ -9,5 +9,7 @@
 
     <string name="up">Up</string>
     <string name="page_title">xyzreader</string>
+    <string name="books_iv_content_description">background image of main list activity\'s toolbar</string>
+    <string name="logo_iv_content_description">logo of the main list activity\'s toolbar</string>
 
 </resources>
