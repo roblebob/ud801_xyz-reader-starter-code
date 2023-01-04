@@ -11,11 +11,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-//import androidx.appcompat.app.ActionBarActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 import android.view.Menu;
@@ -23,11 +19,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.xyzreader.R;
-import com.example.xyzreader.adapter.ArticleListAdapter;
+import com.example.xyzreader.ui.adapter.ArticleListAdapter;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.databinding.ActivityArticleListBinding;
-import com.google.android.material.appbar.AppBarLayout;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
@@ -35,19 +30,16 @@ import com.google.android.material.appbar.AppBarLayout;
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
  */
-public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/ implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/ implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = ArticleListActivity.class.toString();
     private ActivityArticleListBinding binding;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getLoaderManager().initLoader(0, null, this);
-
 
         binding = ActivityArticleListBinding.inflate( getLayoutInflater());
         setContentView( binding.getRoot());
@@ -75,6 +67,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         }
 
         setSupportActionBar(binding.toolbar);
+
     }
 
     private void refresh() {
@@ -117,7 +110,6 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Log.e(TAG, "------> onCreateLoader()");

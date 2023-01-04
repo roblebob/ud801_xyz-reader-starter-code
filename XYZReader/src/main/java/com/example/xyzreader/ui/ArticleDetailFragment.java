@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 
 import java.text.ParseException;
@@ -16,11 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ShareCompat;
 import androidx.palette.graphics.Palette;
 import android.text.Html;
@@ -37,6 +33,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.example.xyzreader.ui.helper.DrawInsetsFrameLayout;
+import com.example.xyzreader.ui.helper.ImageLoaderHelper;
+import com.example.xyzreader.ui.helper.ObservableScrollView;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is

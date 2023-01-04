@@ -1,4 +1,4 @@
-package com.example.xyzreader.adapter;
+package com.example.xyzreader.ui.adapter;
 
 
 import android.app.ActivityOptions;
@@ -18,8 +18,8 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.ui.ArticleListActivity;
-import com.example.xyzreader.ui.DynamicHeightNetworkImageView;
-import com.example.xyzreader.ui.ImageLoaderHelper;
+import com.example.xyzreader.ui.helper.DynamicHeightNetworkImageView;
+import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

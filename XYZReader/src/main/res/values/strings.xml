@@ -1,5 +1,6 @@
 <resources>
 
+    <string name="src_url">https://go.udacity.com/xyz-reader-json</string>
     <string name="app_name">XYZ Reader</string>
     <string name="welcome_xyz_reader">Welcome to XYZ Reader!</string>
 
