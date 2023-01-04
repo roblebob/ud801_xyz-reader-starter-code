@@ -96,8 +96,8 @@ public class UpdateWorker extends Worker {
 
                 mItemDao.insert( new Item(id, title, author, thumb, aspectRatio, publishedDate));
 
+                ArrayList<String> body = new ArrayList<>( Arrays.asList( jsonObject.getString("body" ).split("\r\n\r\n")));
 
-                ArrayList<String> body = new ArrayList<>( Arrays.asList( jsonObject.getString("body" ).split("\r\n")));
                 String photo = jsonObject.getString("photo");
 
                 mItemDetailDao.insert( new ItemDetail( id, body, photo));
