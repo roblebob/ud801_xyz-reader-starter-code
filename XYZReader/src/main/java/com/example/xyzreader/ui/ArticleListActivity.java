@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
@@ -19,10 +20,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.xyzreader.R;
+import com.example.xyzreader.repository.viewmodel.AppViewModel;
+import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ArticleListAdapter;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.databinding.ActivityArticleListBinding;
+import com.example.xyzreader.ui.adapter.ArticleListAdapterNew;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
@@ -30,26 +34,31 @@ import com.example.xyzreader.databinding.ActivityArticleListBinding;
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
  */
-public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/ implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticleListActivity extends AppCompatActivity // implements LoaderManager.LoaderCallbacks<Cursor>
+{
 
     private static final String TAG = ArticleListActivity.class.toString();
     private ActivityArticleListBinding binding;
+    private AppViewModel mViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getLoaderManager().initLoader(0, null, this);
+        // getLoaderManager().initLoader(0, null, this);
+
+
+
 
         binding = ActivityArticleListBinding.inflate( getLayoutInflater());
         setContentView( binding.getRoot());
 
-        binding.recyclerView .setLayoutManager(
-                new StaggeredGridLayoutManager(
-                        getResources().getInteger( R.integer.list_column_count),
-                        StaggeredGridLayoutManager.VERTICAL
-                )
-        );
+        binding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
+
+
+
+
 
         binding.appBarLayout .addOnOffsetChangedListener( (appBarLayout1, verticalOffset) -> {
             float alpha = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
@@ -62,19 +71,44 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
             }
         });
 
-        if (savedInstanceState == null) {
-            refresh();
-        }
 
+        // NEW -------------------------------------------------------------------------------------
+        ArticleListAdapterNew articleListAdapterNew = new ArticleListAdapterNew( this);
+        binding.recyclerView.setAdapter( articleListAdapterNew);
+
+        AppViewModelFactory appViewModelFactory = new AppViewModelFactory(this.getApplication());
+        mViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) appViewModelFactory).get(AppViewModel.class);
+
+        mViewModel.getItemListLive().observe(this, articleListAdapterNew::submit);
+
+        mViewModel.getAppStateByKeyLive("refreshing").observe( this, value -> {
+            if (value == null) {
+                mIsRefreshing = false;
+            } else {
+                mIsRefreshing = true;
+            }
+        });
+
+
+
+
+
+
+
+        if (savedInstanceState == null) { refresh(); }
         setSupportActionBar(binding.toolbar);
-
     }
+
+
+
+
 
     private void refresh() {
         Log.e(TAG, "------> refresh()");
         startService(new Intent(this, UpdaterService.class));
+        mViewModel.refresh();
     }
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     protected void onStart() {
         super.onStart();
@@ -82,15 +116,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
                 new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(mRefreshingReceiver);
-    }
 
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
     private boolean mIsRefreshing = false;
 
     private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
@@ -109,7 +135,14 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         binding.swipeRefreshLayout .setRefreshing(mIsRefreshing);
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(mRefreshingReceiver);
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////
+/*
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Log.e(TAG, "------> onCreateLoader()");
@@ -127,6 +160,7 @@ public class ArticleListActivity extends AppCompatActivity /*ActionBarActivity*/
         Log.e(TAG, "------> onLoaderReset()");
         binding.recyclerView.setAdapter(null);
     }
+*/
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
