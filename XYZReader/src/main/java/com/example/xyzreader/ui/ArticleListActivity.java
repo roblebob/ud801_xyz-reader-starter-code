@@ -36,7 +36,6 @@ import com.example.xyzreader.ui.adapter.ArticleListAdapterNew;
  */
 public class ArticleListActivity extends AppCompatActivity // implements LoaderManager.LoaderCallbacks<Cursor>
 {
-
     private static final String TAG = ArticleListActivity.class.toString();
     private ActivityArticleListBinding binding;
     private AppViewModel mViewModel;
@@ -48,16 +47,8 @@ public class ArticleListActivity extends AppCompatActivity // implements LoaderM
 
         // getLoaderManager().initLoader(0, null, this);
 
-
-
-
         binding = ActivityArticleListBinding.inflate( getLayoutInflater());
         setContentView( binding.getRoot());
-
-        binding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
-
-
-
 
 
         binding.appBarLayout .addOnOffsetChangedListener( (appBarLayout1, verticalOffset) -> {
@@ -71,6 +62,8 @@ public class ArticleListActivity extends AppCompatActivity // implements LoaderM
             }
         });
 
+
+        binding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
 
         // NEW -------------------------------------------------------------------------------------
         ArticleListAdapterNew articleListAdapterNew = new ArticleListAdapterNew( this);
@@ -88,7 +81,7 @@ public class ArticleListActivity extends AppCompatActivity // implements LoaderM
                 mIsRefreshing = true;
             }
         });
-
+        // -----------------------------------------------------------------------------------------
 
 
 
