@@ -287,6 +287,8 @@ public class ArticleDetailFragment extends Fragment implements
         }
     }
 
+
+    //==============================================================================================
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
@@ -319,6 +321,8 @@ public class ArticleDetailFragment extends Fragment implements
         mCursor = null;
         bindViews();
     }
+
+    //==============================================================================================
 
     public int getUpButtonFloor() {
         if (mPhotoContainerView == null || mPhotoView.getHeight() == 0) {

@@ -25,8 +25,7 @@ import com.example.xyzreader.data.ItemsContract;
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
-public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivity*/
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticleDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private Cursor mCursor;
     private long mStartId;
@@ -118,7 +117,7 @@ public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivi
 
 
 
-
+    //==============================================================================================
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return ArticleLoader.newAllArticlesInstance(this);
@@ -150,6 +149,11 @@ public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivi
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
     }
+    //==============================================================================================
+
+
+
+
 
     public void onUpButtonFloorChanged(long itemId, ArticleDetailFragment fragment) {
         if (itemId == mSelectedItemId) {
@@ -162,6 +166,13 @@ public class ArticleDetailActivity extends AppCompatActivity   /*ActionBarActivi
         int upButtonNormalBottom = mTopInset + mUpButton.getHeight();
         mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
     }
+
+
+
+
+
+
+
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
