@@ -2,8 +2,7 @@ package com.example.xyzreader.repository.worker;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentValues;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,7 +13,6 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.repository.model.AppDatabase;
 import com.example.xyzreader.repository.model.AppState;
 import com.example.xyzreader.repository.model.AppStateDao;
@@ -29,7 +27,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
