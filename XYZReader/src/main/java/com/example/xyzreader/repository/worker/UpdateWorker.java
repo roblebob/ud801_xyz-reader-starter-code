@@ -91,15 +91,16 @@ public class UpdateWorker extends Worker {
                 String title = jsonObject.getString("title");
                 String author = jsonObject.getString("author");
                 String thumb = jsonObject.getString("thumb");
+                String photo = jsonObject.getString("photo");
                 double aspectRatio = jsonObject.getDouble("aspect_ratio");
                 String publishedDate = jsonObject.getString("published_date");
 
-                mItemDao.insert( new Item(id, title, author, thumb, aspectRatio, publishedDate));
-
                 ArrayList<String> body = new ArrayList<>( Arrays.asList( jsonObject.getString("body" ).split("\r\n\r\n")));
+                body.forEach(s -> s = s.replace("\r\n", " "));
 
-                String photo = jsonObject.getString("photo");
 
+
+                mItemDao.insert( new Item( id, title, author, thumb, aspectRatio, publishedDate));
                 mItemDetailDao.insert( new ItemDetail( id, body, photo));
             }
 
