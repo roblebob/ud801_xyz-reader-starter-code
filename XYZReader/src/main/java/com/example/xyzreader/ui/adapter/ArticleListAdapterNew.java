@@ -23,10 +23,14 @@ import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapterNew.ViewHolder> {
 
@@ -84,7 +88,10 @@ public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapt
 //                );
 //            }
 
-        holder.yearView.setText( mItemList.get( position).getPublishedDate());
+        holder.yearView.setText( String.format( Locale.getDefault(),"%d",
+                LocalDateTime.ofInstant( Instant.parse( mItemList.get( position).getPublishedDate() + "Z"), ZoneId.systemDefault()) .getYear()
+        ));
+
         holder.authorView.setText( mItemList.get( position).getAuthor());
 
         holder.thumbnailView.setImageUrl(
