@@ -201,7 +201,7 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     static float progress(float v, float min, float max) {
-        return Util.constrain((v - min) / (max - min), 0, 1);
+        return Util.constrain((v - min) / (max - min), 0f, 1f);
     }
 
 

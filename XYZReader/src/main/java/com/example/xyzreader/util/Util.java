@@ -2,6 +2,7 @@ package com.example.xyzreader.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public final class Util {
     private Util() {}
@@ -18,10 +19,10 @@ public final class Util {
 
 
 
-    public static float constrain(float val, float min, float max) {
-        if (val < min) {
+    public static <T extends Comparable<T>> T constrain(T val, T min, T max) {
+        if (val.compareTo(min) < 0) {
             return min;
-        } else if (val > max) {
+        } else if (val.compareTo(max) > 0) {
             return max;
         } else {
             return val;
