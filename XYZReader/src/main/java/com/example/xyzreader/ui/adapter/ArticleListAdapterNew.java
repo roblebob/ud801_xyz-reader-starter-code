@@ -98,6 +98,7 @@ public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapt
                 mItemList.get( position).getThumb(),
                 ImageLoaderHelper.getInstance( (ArticleListActivity) mContext).getImageLoader()
         );
+
         holder.thumbnailView.setAspectRatio( (float) mItemList.get( position).getAspectRatio());
 
 
