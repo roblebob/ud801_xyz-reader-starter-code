@@ -20,6 +20,7 @@ import com.example.xyzreader.repository.model.Item;
 import com.example.xyzreader.repository.model.ItemDao;
 import com.example.xyzreader.repository.model.ItemDetail;
 import com.example.xyzreader.repository.model.ItemDetailDao;
+import com.example.xyzreader.util.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,13 +88,12 @@ public class UpdateWorker extends Worker {
                 int id = jsonObject.getInt("id" );
                 String title = jsonObject.getString("title");
                 String author = jsonObject.getString("author");
+                ArrayList<String> body = Util.processArticleBody( jsonObject.getString("body" ));
                 String thumb = jsonObject.getString("thumb");
                 String photo = jsonObject.getString("photo");
                 double aspectRatio = jsonObject.getDouble("aspect_ratio");
                 String publishedDate = jsonObject.getString("published_date");
 
-                ArrayList<String> body = new ArrayList<>( Arrays.asList( jsonObject.getString("body" ).split("\r\n\r\n")));
-                body.forEach(s -> s = s.replace("\r\n", " "));
 
 
 

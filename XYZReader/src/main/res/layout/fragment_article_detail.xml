@@ -85,7 +85,7 @@
                         android:textColor="#8fff" />
                 </LinearLayout>
 
-                <TextView
+                <!--TextView
                     android:id="@+id/article_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,12 +96,21 @@
                     android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"
 
                     style="?android:attr/textAppearanceSmall"
-                    />
+                    /-->
                     <!--
                     android:textSize="@dimen/detail_body_text_size"
                     android:textColor="@color/ltgray"
                     style="?android:attr/textAppearanceMedium"
                     -->
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/article_body_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+
+
 
 
             </com.example.xyzreader.ui.helper.MaxWidthLinearLayout>

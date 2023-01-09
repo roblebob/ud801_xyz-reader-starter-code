@@ -13,6 +13,9 @@ import android.text.format.Time;
 import android.util.Log;
 
 
+import com.example.xyzreader.util.Util;
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,13 +25,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class UpdaterService extends IntentService {
-    private static final String TAG = "UpdaterService";
+    private static final String TAG = UpdaterService.class.getSimpleName();
     public static final String BROADCAST_ACTION_STATE_CHANGE = "com.example.xyzreader.intent.action.STATE_CHANGE";
     public static final String EXTRA_REFRESHING = "com.example.xyzreader.intent.extra.REFRESHING";
 
@@ -41,8 +45,7 @@ public class UpdaterService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // Don't even inspect the intent, we only do one thing, and that's fetch content.
 
-        NetworkInfo networkInfo = ((ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE))
-                .getActiveNetworkInfo();
+        NetworkInfo networkInfo = ((ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE)) .getActiveNetworkInfo();
 
         if (networkInfo == null || !networkInfo.isConnected()) {
             Log.w(TAG, "Not online, not refreshing.");
@@ -82,12 +85,9 @@ public class UpdaterService extends IntentService {
             ArrayList< ContentProviderOperation> contentProviderOperations = new ArrayList<>();
 
             // first Operation added:  Delete all items
-            contentProviderOperations .add(
-                    ContentProviderOperation
-                            .newDelete( dirUri)
-                            .build()
-            );
+            contentProviderOperations.add( ContentProviderOperation .newDelete( dirUri) .build());
 
+            Gson gson = new Gson();
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -97,24 +97,16 @@ public class UpdaterService extends IntentService {
                 contentValues.put( ItemsContract.Items.SERVER_ID,       jsonObject.getString("id" ));
                 contentValues.put( ItemsContract.Items.AUTHOR,          jsonObject.getString("author" ));
                 contentValues.put( ItemsContract.Items.TITLE,           jsonObject.getString("title" ));
-                contentValues.put( ItemsContract.Items.BODY,            jsonObject.getString("body" ));
+                contentValues.put( ItemsContract.Items.BODY,            gson.toJson( Util.processArticleBody( jsonObject.getString("body" ))));
                 contentValues.put( ItemsContract.Items.THUMB_URL,       jsonObject.getString("thumb" ));
                 contentValues.put( ItemsContract.Items.PHOTO_URL,       jsonObject.getString("photo" ));
                 contentValues.put( ItemsContract.Items.ASPECT_RATIO,    jsonObject.getString("aspect_ratio" ));
                 contentValues.put( ItemsContract.Items.PUBLISHED_DATE,  jsonObject.getString("published_date"));
 
-                contentProviderOperations .add(
-                        ContentProviderOperation
-                                .newInsert( dirUri)
-                                .withValues( contentValues)
-                                .build()
-                );
+                contentProviderOperations.add( ContentProviderOperation .newInsert( dirUri) .withValues( contentValues) .build());
             }
 
-
-            getContentResolver()
-                    .applyBatch( ItemsContract.CONTENT_AUTHORITY, contentProviderOperations);
-
+            getContentResolver().applyBatch( ItemsContract.CONTENT_AUTHORITY, contentProviderOperations);
 
         } catch (MalformedURLException ignored) { // TODO: throw a real error
             Log.e(TAG, "MalformedURLException (ignored == not handled)." +  " Please check your internet connection !!!");
@@ -123,8 +115,6 @@ public class UpdaterService extends IntentService {
         } catch (JSONException | RemoteException | OperationApplicationException e) {
             Log.e(TAG, "Error updating content.", e);
         }
-
-
 
 
         //==========================================================================================
