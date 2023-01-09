@@ -133,7 +133,7 @@ public class ArticleDetailActivity extends AppCompatActivity implements LoaderMa
             mCursor.moveToFirst();
             // TODO: optimize
             while (!mCursor.isAfterLast()) {
-                if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
+                if (mCursor.getLong(ArticleLoader.Query.SERVER_ID) == mStartId) {
                     final int position = mCursor.getPosition();
                     mPager.setCurrentItem(position, false);
                     break;
