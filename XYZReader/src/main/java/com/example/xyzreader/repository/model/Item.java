@@ -14,15 +14,17 @@ public class Item {
     @ColumnInfo(name = "thumb")             private String thumb;
     @ColumnInfo(name = "aspectRatio")       private double aspectRatio;
     @ColumnInfo(name = "publishedDate")     private String publishedDate;
+    @ColumnInfo(name = "color")             private int    color;
 
 
-    public Item(int id, String title, String author, String thumb, double aspectRatio, String publishedDate) {
+    public Item(int id, String title, String author, String thumb, double aspectRatio, String publishedDate, int color) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.thumb = thumb;
         this.aspectRatio = aspectRatio;
         this.publishedDate = publishedDate;
+        this.color = color;
     }
 
     public int getId() {
@@ -65,5 +67,12 @@ public class Item {
     }
     public void setPublishedDate(String publishedDate) {
         this.publishedDate = publishedDate;
+    }
+
+    public int getColor() {
+        return color;
+    }
+    public void setColor(int color) {
+        this.color = color;
     }
 }

@@ -8,11 +8,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -20,6 +23,7 @@ import com.example.xyzreader.repository.model.Item;
 import com.example.xyzreader.ui.ArticleListActivity;
 import com.example.xyzreader.ui.helper.DynamicHeightNetworkImageView;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
+import com.google.android.material.card.MaterialCardView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,7 +66,11 @@ public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapt
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        holder.titleView.setText( mItemList.get( position).getTitle());
+        Item item = mItemList.get( position);
+
+        holder.cardView.setCardBackgroundColor( item.getColor());
+
+        holder.titleView.setText( item.getTitle());
 
 
 //        Date publishedDate = parsePublishedDate();
@@ -89,27 +97,27 @@ public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapt
 //            }
 
         holder.yearView.setText( String.format( Locale.getDefault(),"%d",
-                LocalDateTime.ofInstant( Instant.parse( mItemList.get( position).getPublishedDate() + "Z"), ZoneId.systemDefault()) .getYear()
+                LocalDateTime.ofInstant( Instant.parse( item.getPublishedDate() + "Z"), ZoneId.systemDefault()) .getYear()
         ));
 
-        holder.authorView.setText( mItemList.get( position).getAuthor());
+        holder.authorView.setText( item.getAuthor());
 
         holder.thumbnailView.setImageUrl(
-                mItemList.get( position).getThumb(),
+                item.getThumb(),
                 ImageLoaderHelper.getInstance( (ArticleListActivity) mContext).getImageLoader()
         );
 
-        holder.thumbnailView.setAspectRatio( (float) mItemList.get( position).getAspectRatio());
+        //holder.thumbnailView.setAspectRatio( (float) mItemList.get( position).getAspectRatio());
 
 
-        holder.thumbnailView.setTransitionName( mItemList.get( position).getTitle());
+        holder.thumbnailView.setTransitionName( item.getTitle());
 
         holder.itemView.setOnClickListener(view1 -> {
             if (mContext instanceof ArticleListActivity) {
                 mContext.startActivity(
                         new Intent(
                                 Intent.ACTION_VIEW,
-                                ItemsContract.Items.buildItemUri( mItemList.get( position).getId())
+                                ItemsContract.Items.buildItemUri( item.getId())
                         ),
                         ActivityOptions
                                 .makeSceneTransitionAnimation(
@@ -133,14 +141,16 @@ public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapt
 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        public DynamicHeightNetworkImageView thumbnailView;
+        public MaterialCardView cardView;
+        public NetworkImageView thumbnailView;
         public TextView titleView;
         public TextView authorView;
         public TextView yearView;
 
         public ViewHolder(View view) {
             super(view);
-            thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
+            cardView = view.findViewById(R.id.list_item_artical_cardview);
+            thumbnailView = (NetworkImageView)  view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.list_item_article__title_tv);
             authorView = (TextView) view.findViewById(R.id.list_item_article__author_tv);
             yearView = view.findViewById(R.id.list_item_article__year_tv);

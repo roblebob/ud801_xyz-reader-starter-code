@@ -14,6 +14,13 @@ public interface ItemDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert( Item item);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void update( Item item);
+
+    @Query(value = "UPDATE Item SET `color` = :color WHERE id = :id ")
+    void updateColor(int id, int color);
+
+
     @Query("SELECT * FROM Item ORDER BY publishedDate DESC")
     LiveData<List<Item>> loadItemListLive();
 
