@@ -15,10 +15,8 @@ import androidx.palette.graphics.Palette;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
+
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.repository.model.AppDatabase;
 import com.example.xyzreader.repository.model.AppState;
 import com.example.xyzreader.repository.model.AppStateDao;
@@ -26,7 +24,6 @@ import com.example.xyzreader.repository.model.Item;
 import com.example.xyzreader.repository.model.ItemDao;
 import com.example.xyzreader.repository.model.ItemDetail;
 import com.example.xyzreader.repository.model.ItemDetailDao;
-import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 import com.example.xyzreader.util.Util;
 
 import org.json.JSONArray;
@@ -38,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

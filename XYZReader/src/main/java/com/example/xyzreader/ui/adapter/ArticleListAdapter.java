@@ -30,16 +30,16 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
     public static final String TAG = ArticleListAdapter.class.getSimpleName();
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
 
-    private SimpleDateFormat mOutputFormatYear = new SimpleDateFormat("yyyy");
+    private final SimpleDateFormat mOutputFormatYear = new SimpleDateFormat("yyyy");
 
-    private Cursor mCursor;
-    private Context mContext;
+    private final Cursor mCursor;
+    private final Context mContext;
 
     public ArticleListAdapter(Cursor cursor, Context context) {
         mCursor = cursor;
@@ -109,7 +109,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         holder.thumbnailView.setImageUrl(
                 mCursor.getString(ArticleLoader.Query.THUMB_URL),
-                ImageLoaderHelper.getInstance( (ArticleListActivity) mContext).getImageLoader()
+                ImageLoaderHelper.getInstance( mContext).getImageLoader()
         );
         holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
 
@@ -151,9 +151,9 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         public ViewHolder(View view) {
             super(view);
-            thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
-            titleView = (TextView) view.findViewById(R.id.list_item_article__title_tv);
-            authorView = (TextView) view.findViewById(R.id.list_item_article__author_tv);
+            thumbnailView = view.findViewById(R.id.thumbnail);
+            titleView = view.findViewById(R.id.list_item_article__title_tv);
+            authorView = view.findViewById(R.id.list_item_article__author_tv);
             yearView = view.findViewById(R.id.list_item_article__year_tv);
         }
     }
