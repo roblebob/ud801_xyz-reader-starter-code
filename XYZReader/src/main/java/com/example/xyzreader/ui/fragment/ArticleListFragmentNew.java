@@ -95,6 +95,9 @@ public class ArticleListFragmentNew extends Fragment {
             appBarLayout1.setAlpha(alpha);
             binding.recyclerView.setAlpha( 1.0f - alpha);
 
+            binding.logoIv.setScaleX( alpha);
+            binding.logoIv.setScaleY( alpha);
+
             if (!mIsRefreshing && binding.swipeRefreshLayout.isRefreshing()) {
                 updateRefreshingUI();
             }
