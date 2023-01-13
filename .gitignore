@@ -34,7 +34,6 @@ captures/
 
 # Intellij
 *.iml
-.idea/workspace.xml
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
