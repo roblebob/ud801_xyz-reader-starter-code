@@ -12,5 +12,7 @@
     <string name="page_title">xyzreader</string>
     <string name="books_iv_content_description">background image of main list activity\'s toolbar</string>
     <string name="logo_iv_content_description">logo of the main list activity\'s toolbar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
