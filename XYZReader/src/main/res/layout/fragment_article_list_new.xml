@@ -107,14 +107,16 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
+
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_anchor="@+id/swipe_refresh_layout"
         app:layout_anchorGravity="center"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
@@ -124,10 +126,12 @@
             android:paddingTop="116dp"
             android:paddingRight="@dimen/list_side_margin"
             android:paddingBottom="28dp"
-            android:scrollbarStyle="outsideOverlay" />
+            android:scrollbarStyle="outsideOverlay"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            />
+
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
     <!--FrameLayout
         android:id="@+id/toolbar_container"
