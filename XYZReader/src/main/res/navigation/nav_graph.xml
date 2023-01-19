@@ -15,6 +15,53 @@
         tools:layout="@layout/fragment_article_list_new"
         >
 
+        <action
+            android:id="@+id/action_articleListFragmentNew_to_articleDetailFragmentNew"
+            app:destination="@id/articleDetailFragmentNew"
+            />
+
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="1"
+            />
+
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0"
+            />
+
+
+    </fragment>
+
+
+
+
+    <fragment
+        android:id="@+id/articleDetailFragmentNew"
+        android:name="com.example.xyzreader.ui.fragment.ArticleDetailFragmentNew"
+        android:label="ArticleDetailFragmentNew"
+        tools:layout="@layout/fragment_article_detail_new"
+        >
+
+        <action
+            android:id="@+id/action_articleDetailFragmentNew_to_articleListFragmentNew"
+            app:destination="@id/articleListFragmentNew"
+            />
+
+
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="1"
+            />
+
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0"
+            />
 
 
     </fragment>

@@ -2,6 +2,7 @@ package com.example.xyzreader.repository.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 
@@ -26,6 +27,19 @@ public class Item {
         this.publishedDate = publishedDate;
         this.color = color;
     }
+
+    @Ignore
+    public Item( Item item) {
+        this.id = item.id;
+        this.title = item.title;
+        this.author = item.author;
+        this.thumb = item.thumb;
+        this.aspectRatio = item.aspectRatio;
+        this.publishedDate = item.publishedDate;
+        this.color = item.color;
+    }
+
+
 
     public int getId() {
         return id;

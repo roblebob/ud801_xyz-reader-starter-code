@@ -38,6 +38,9 @@ public class AppViewModel extends ViewModel {
     public LiveData<String> getAppStateByKeyLive(String key) { return mAppStateDao.loadValueByKeyLive( key); }
 
     public LiveData<List<Item>> getItemListLive() { return mItemDao.loadItemListLive(); }
+
+    public LiveData<List<Integer>> getItemIdListLive() { return mItemDao.loadItemIdListLive(); }
+
     public LiveData<Item> getItemByIdLive( int id) { return mItemDao.loadItemByIdLive( id); }
     public LiveData<ItemDetail> getItemDetailByIdLive( int id) { return mItemDetailDao.loadItemDetailByIdLive( id); }
 

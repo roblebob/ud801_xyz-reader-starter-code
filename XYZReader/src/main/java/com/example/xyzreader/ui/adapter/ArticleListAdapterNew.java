@@ -1,6 +1,7 @@
 package com.example.xyzreader.ui.adapter;
 
 import android.app.ActivityOptions;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -16,6 +19,7 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.repository.model.Item;
 import com.example.xyzreader.ui.ArticleListActivity;
+import com.example.xyzreader.ui.fragment.ArticleDetailFragmentNewDirections;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 import com.google.android.material.card.MaterialCardView;
 
@@ -29,8 +33,14 @@ import java.util.Locale;
 public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapterNew.ViewHolder> {
     private final Context mContext;
 
-    public ArticleListAdapterNew( Context context) {
+
+    public interface ItemCLickListener { void onItemCLickListener( int id, int pos); }
+    ItemCLickListener mItemCLickListener;
+
+
+    public ArticleListAdapterNew( Context context, ItemCLickListener itemCLickListener) {
         mContext = context;
+        mItemCLickListener = itemCLickListener;
         this.setHasStableIds(true);
     }
 
@@ -69,23 +79,7 @@ public class ArticleListAdapterNew extends RecyclerView.Adapter<ArticleListAdapt
 
         holder.thumbnailView.setTransitionName( item.getTitle());
 
-        holder.itemView.setOnClickListener(view1 -> {
-            if (mContext instanceof ArticleListActivity) {
-                mContext.startActivity(
-                        new Intent(
-                                Intent.ACTION_VIEW,
-                                ItemsContract.Items.buildItemUri( item.getId())
-                        ),
-                        ActivityOptions
-                                .makeSceneTransitionAnimation(
-                                        (ArticleListActivity) mContext,
-                                        holder.thumbnailView,
-                                        holder.thumbnailView.getTransitionName()
-                                )
-                                .toBundle()
-                );
-            }
-        });
+        holder.itemView.setOnClickListener(view1 -> mItemCLickListener.onItemCLickListener( item.getId(), position));
     }
 
     @Override

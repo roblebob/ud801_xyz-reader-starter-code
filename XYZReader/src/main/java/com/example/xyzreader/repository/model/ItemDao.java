@@ -24,6 +24,9 @@ public interface ItemDao {
     @Query("SELECT * FROM Item ORDER BY publishedDate DESC")
     LiveData<List<Item>> loadItemListLive();
 
+    @Query("SELECT id FROM Item ORDER BY publishedDate DESC")
+    LiveData<List<Integer>> loadItemIdListLive();
+
     @Query("SELECT * FROM Item WHERE :id = id")
     LiveData<Item> loadItemByIdLive(int id);
 }

@@ -174,7 +174,7 @@ public class ArticleDetailFragment extends Fragment implements
         );
 
         mRecyclerView = mRootView.findViewById( R.id.article_body_rv);
-        mArticleBodyAdapter = new ArticleBodyAdapter(getActivityCast());
+        mArticleBodyAdapter = new ArticleBodyAdapter();
         mRecyclerView.setLayoutManager( new LinearLayoutManager(getActivityCast()));
         mRecyclerView.setAdapter( mArticleBodyAdapter);
 

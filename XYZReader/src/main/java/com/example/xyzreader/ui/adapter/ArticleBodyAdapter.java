@@ -17,10 +17,8 @@ import java.util.List;
 public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.ViewHolder> {
     public static final String TAG = ArticleBodyAdapter.class.getSimpleName();
 
-    private Context mContext;
 
-    public ArticleBodyAdapter(Context context) {
-        this.mContext = context;
+    public ArticleBodyAdapter() {
         this.setHasStableIds(true);
     }
 

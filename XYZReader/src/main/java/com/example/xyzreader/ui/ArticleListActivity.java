@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui;
 
+import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.xyzreader.R;
+import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ArticleListAdapter;
@@ -34,8 +36,7 @@ import com.example.xyzreader.ui.adapter.ArticleListAdapterNew;
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
  */
-public class ArticleListActivity extends AppCompatActivity // implements LoaderManager.LoaderCallbacks<Cursor>
-{
+public class ArticleListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = ArticleListActivity.class.toString();
     private ActivityArticleListBinding binding;
     private AppViewModel mViewModel;
@@ -66,13 +67,13 @@ public class ArticleListActivity extends AppCompatActivity // implements LoaderM
         binding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
 
         // NEW -------------------------------------------------------------------------------------
-        ArticleListAdapterNew articleListAdapterNew = new ArticleListAdapterNew( this);
-        binding.recyclerView.setAdapter( articleListAdapterNew);
+        //ArticleListAdapterNew articleListAdapterNew = new ArticleListAdapterNew( this, this);
+        //binding.recyclerView.setAdapter( articleListAdapterNew);
 
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(this.getApplication());
         mViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) appViewModelFactory).get(AppViewModel.class);
 
-        mViewModel.getItemListLive().observe(this, articleListAdapterNew::submit);
+        //mViewModel.getItemListLive().observe(this, articleListAdapterNew::submit);
 
         mViewModel.getAppStateByKeyLive("refreshing").observe( this, value -> {
             if (value == null) {
@@ -135,7 +136,6 @@ public class ArticleListActivity extends AppCompatActivity // implements LoaderM
         unregisterReceiver(mRefreshingReceiver);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
-/*
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Log.e(TAG, "------> onCreateLoader()");
@@ -153,7 +153,6 @@ public class ArticleListActivity extends AppCompatActivity // implements LoaderM
         Log.e(TAG, "------> onLoaderReset()");
         binding.recyclerView.setAdapter(null);
     }
-*/
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -187,4 +186,6 @@ public class ArticleListActivity extends AppCompatActivity // implements LoaderM
 
         //postponeEnterTransition();
     }
+
+
 }

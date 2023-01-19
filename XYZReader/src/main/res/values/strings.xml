@@ -14,5 +14,6 @@
     <string name="logo_iv_content_description">logo of the main list activity\'s toolbar</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_screen_slide_page__photo__content_description">the associated photo to the article presented</string>
 
 </resources>

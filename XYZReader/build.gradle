@@ -4,7 +4,12 @@ buildscript {
     }
     //dependencies { classpath 'com.android.tools.build:gradle:2.2.0' }
 }
-apply plugin: 'com.android.application'
+
+
+plugins {
+    id 'com.android.application'
+    id 'androidx.navigation.safeargs'
+}
 
 repositories {
     mavenCentral()

@@ -2,6 +2,7 @@ package com.example.xyzreader.repository.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
@@ -17,6 +18,13 @@ public class ItemDetail {
         this.id = id;
         this.body = body;
         this.photo = photo;
+    }
+
+    @Ignore
+    public ItemDetail( ItemDetail itemDetail) {
+        this.id = itemDetail.id;
+        this.body = itemDetail.body;
+        this.photo = itemDetail.photo;
     }
 
     public int getId() {

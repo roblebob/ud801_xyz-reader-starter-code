@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
@@ -32,7 +34,7 @@ import com.example.xyzreader.ui.adapter.ArticleListAdapterNew;
  * Use the {@link ArticleListFragmentNew#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArticleListFragmentNew extends Fragment {
+public class ArticleListFragmentNew extends Fragment implements ArticleListAdapterNew.ItemCLickListener {
     public static final String TAG = ArticleListFragmentNew.class.getSimpleName();
 
     // TODO: Rename parameter arguments, choose names that match
@@ -107,7 +109,7 @@ public class ArticleListFragmentNew extends Fragment {
         binding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
 
         // NEW -------------------------------------------------------------------------------------
-        ArticleListAdapterNew articleListAdapterNew = new ArticleListAdapterNew( getContext());
+        ArticleListAdapterNew articleListAdapterNew = new ArticleListAdapterNew( getContext(), this);
         binding.recyclerView.setAdapter( articleListAdapterNew);
 
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory( requireActivity().getApplication());
@@ -165,11 +167,18 @@ public class ArticleListFragmentNew extends Fragment {
         binding = null;
     }
 
+    @Override
+    public void onItemCLickListener(int id, int pos) {
+        ArticleListFragmentNewDirections.ActionArticleListFragmentNewToArticleDetailFragmentNew action =
+                ArticleListFragmentNewDirections.actionArticleListFragmentNewToArticleDetailFragmentNew();
 
+        action.setId( id);
+        action.setPosition( pos);
 
+        NavController navController = NavHostFragment.findNavController( this);
 
-
-
+        navController.navigate( action);
+    }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
