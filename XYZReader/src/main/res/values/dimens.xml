@@ -1,5 +1,15 @@
 <resources>
+    <!-- master -->
+
+
+    <dimen name="master_appbar_height">283dp</dimen> <!-- layout_height taken 740dp as temporary fixed heigth multiplay by goldenratio, in detail: 740dp *  (1  - 2 / (1 + sqrt(5)))   = 282.65484832507786 (https://en.wikipedia.org/wiki/Golden_ratio) -->
+
+
+
+
     <!-- detail -->
+
+
     <dimen name="detail_title_text_size">32sp</dimen>
     <dimen name="detail_body_text_size">22sp</dimen>
     <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
