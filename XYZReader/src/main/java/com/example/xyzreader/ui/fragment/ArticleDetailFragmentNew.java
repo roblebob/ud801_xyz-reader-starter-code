@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class ArticleDetailFragmentNew extends Fragment {
+    public static final String TAG = ArticleDetailFragmentNew.class.getSimpleName();
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -87,11 +90,14 @@ public class ArticleDetailFragmentNew extends Fragment {
         mBinding = FragmentArticleDetailNewBinding.inflate( inflater, container, false);
 
 
-        mBinding.upContainer.setOnClickListener( (view) -> {
+        mBinding.actionUp.setOnClickListener( (view) -> {
             ArticleDetailFragmentNewDirections.ActionArticleDetailFragmentNewToArticleListFragmentNew action =
                     ArticleDetailFragmentNewDirections.actionArticleDetailFragmentNewToArticleListFragmentNew();
 
-            action.setId( mBinding.pager.getCurrentItem());
+
+            int pos = mBinding.pager.getCurrentItem();
+            action.setId(mArticleIdList.get(pos));
+            action.setPosition( pos);
 
             NavController navController = NavHostFragment.findNavController( this);
             navController.navigate( action);
@@ -115,6 +121,14 @@ public class ArticleDetailFragmentNew extends Fragment {
         mBinding.pager.postDelayed( () -> mBinding.pager.setCurrentItem( pos, false), 100);
 
 
+        // moves the back arrow under the system bar
+        mBinding.actionUp.setOnApplyWindowInsetsListener( (view, insets) -> {
+            int statusBarSize = insets.getSystemWindowInsetTop();
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            p.setMargins(0, statusBarSize, 0, 0);
+            view.requestLayout();
+            return insets;
+        });
 
 
         return mBinding.getRoot();
