@@ -4,14 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.xyzreader.ui.fragment.ArticleDetailFragmentNew;
+import com.example.xyzreader.ui.fragment.ArticleDetailFragment;
 import com.example.xyzreader.ui.fragment.ScreenSlidePageFragment;
 
 public class ScreenSlidePagerAdapter extends FragmentStateAdapter {
 
-    ArticleDetailFragmentNew mFragment;
+    ArticleDetailFragment mFragment;
 
-    public ScreenSlidePagerAdapter(@NonNull ArticleDetailFragmentNew fragment) {
+    public ScreenSlidePagerAdapter(@NonNull ArticleDetailFragment fragment) {
         super(fragment);
         mFragment = fragment;
     }

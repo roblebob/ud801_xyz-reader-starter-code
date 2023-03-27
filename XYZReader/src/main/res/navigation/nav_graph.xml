@@ -4,20 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/articleListFragmentNew"
+    app:startDestination="@id/articleListFragment"
     >
 
 
     <fragment
-        android:id="@+id/articleListFragmentNew"
-        android:name="com.example.xyzreader.ui.fragment.ArticleListFragmentNew"
-        android:label="ArticleListFragmentNew"
-        tools:layout="@layout/fragment_article_list_new"
+        android:id="@+id/articleListFragment"
+        android:name="com.example.xyzreader.ui.fragment.ArticleListFragment"
+        android:label="ArticleListFragment"
+        tools:layout="@layout/fragment_article_list"
         >
 
         <action
-            android:id="@+id/action_articleListFragmentNew_to_articleDetailFragmentNew"
-            app:destination="@id/articleDetailFragmentNew"
+            android:id="@+id/action_articleListFragment_to_articleDetailFragment"
+            app:destination="@id/articleDetailFragment"
             />
 
         <argument
@@ -39,15 +39,15 @@
 
 
     <fragment
-        android:id="@+id/articleDetailFragmentNew"
-        android:name="com.example.xyzreader.ui.fragment.ArticleDetailFragmentNew"
-        android:label="ArticleDetailFragmentNew"
-        tools:layout="@layout/fragment_article_detail_new"
+        android:id="@+id/articleDetailFragment"
+        android:name="com.example.xyzreader.ui.fragment.ArticleDetailFragment"
+        android:label="ArticleDetailFragment"
+        tools:layout="@layout/fragment_article_detail"
         >
 
         <action
-            android:id="@+id/action_articleDetailFragmentNew_to_articleListFragmentNew"
-            app:destination="@id/articleListFragmentNew"
+            android:id="@+id/action_articleDetailFragment_to_articleListFragment"
+            app:destination="@id/articleListFragment"
             />
 
 

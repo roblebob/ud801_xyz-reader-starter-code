@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.databinding.FragmentScreenSlidePageBinding;
 import com.example.xyzreader.repository.model.Item;
 import com.example.xyzreader.repository.model.ItemDetail;

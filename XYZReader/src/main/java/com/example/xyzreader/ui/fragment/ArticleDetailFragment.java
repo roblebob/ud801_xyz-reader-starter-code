@@ -9,14 +9,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentArticleDetailBinding;
-import com.example.xyzreader.databinding.FragmentArticleDetailNewBinding;
 import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ScreenSlidePagerAdapter;
@@ -30,11 +27,11 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ArticleDetailFragmentNew#newInstance} factory method to
+ * Use the {@link ArticleDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArticleDetailFragmentNew extends Fragment {
-    public static final String TAG = ArticleDetailFragmentNew.class.getSimpleName();
+public class ArticleDetailFragment extends Fragment {
+    public static final String TAG = ArticleDetailFragment.class.getSimpleName();
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -47,12 +44,12 @@ public class ArticleDetailFragmentNew extends Fragment {
     private String mParam2;
 
     private AppViewModel mViewModel;
-    private FragmentArticleDetailNewBinding mBinding;
+    private FragmentArticleDetailBinding mBinding;
     private FragmentStateAdapter mPagerAdapter;
     private List<Integer> mArticleIdList = new ArrayList<>();
     public List<Integer> getArticleIdList() { return mArticleIdList; }
 
-    public ArticleDetailFragmentNew() {
+    public ArticleDetailFragment() {
         // Required empty public constructor
     }
 
@@ -65,8 +62,8 @@ public class ArticleDetailFragmentNew extends Fragment {
      * @return A new instance of fragment ArticleDetailFragmentNew.
      */
     // TODO: Rename and change types and number of parameters
-    public static ArticleDetailFragmentNew newInstance(String param1, String param2) {
-        ArticleDetailFragmentNew fragment = new ArticleDetailFragmentNew();
+    public static ArticleDetailFragment newInstance(String param1, String param2) {
+        ArticleDetailFragment fragment = new ArticleDetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -87,12 +84,12 @@ public class ArticleDetailFragmentNew extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mBinding = FragmentArticleDetailNewBinding.inflate( inflater, container, false);
+        mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
 
 
         mBinding.actionUp.setOnClickListener( (view) -> {
-            ArticleDetailFragmentNewDirections.ActionArticleDetailFragmentNewToArticleListFragmentNew action =
-                    ArticleDetailFragmentNewDirections.actionArticleDetailFragmentNewToArticleListFragmentNew();
+            ArticleDetailFragmentDirections.ActionArticleDetailFragmentToArticleListFragment action =
+                    ArticleDetailFragmentDirections.actionArticleDetailFragmentToArticleListFragment();
 
 
             int pos = mBinding.pager.getCurrentItem();
@@ -116,8 +113,8 @@ public class ArticleDetailFragmentNew extends Fragment {
         });
 
 
-        int id = ArticleDetailFragmentNewArgs.fromBundle( getArguments()).getId();
-        int pos = ArticleDetailFragmentNewArgs.fromBundle( getArguments()).getPosition();
+        int id = ArticleDetailFragmentArgs.fromBundle( getArguments()).getId();
+        int pos = ArticleDetailFragmentArgs.fromBundle( getArguments()).getPosition();
         mBinding.pager.postDelayed( () -> mBinding.pager.setCurrentItem( pos, false), 100);
 
 
