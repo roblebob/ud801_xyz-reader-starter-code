@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentScreenSlidePageBinding;
 import com.example.xyzreader.repository.model.Item;
 import com.example.xyzreader.repository.model.ItemDetail;
@@ -24,15 +23,12 @@ import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ArticleBodyAdapter;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 
-import java.util.ArrayList;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ScreenSlidePageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ScreenSlidePageFragment extends Fragment {
-    public static final String TAG = ScreenSlidePageFragment.class.getSimpleName();
     private static final String ID = "id";
     private static final String POS = "pos";
     private int mId;
