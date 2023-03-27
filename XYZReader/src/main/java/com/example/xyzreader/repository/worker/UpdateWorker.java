@@ -17,10 +17,10 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.repository.model.AppDatabase;
 import com.example.xyzreader.repository.model.AppState;
 import com.example.xyzreader.repository.model.AppStateDao;
-import com.example.xyzreader.repository.model.Item;
-import com.example.xyzreader.repository.model.ItemDao;
-import com.example.xyzreader.repository.model.ItemDetail;
-import com.example.xyzreader.repository.model.ItemDetailDao;
+import com.example.xyzreader.repository.model.Article;
+import com.example.xyzreader.repository.model.ArticleDao;
+import com.example.xyzreader.repository.model.ArticleDetail;
+import com.example.xyzreader.repository.model.ArticleDetailDao;
 import com.example.xyzreader.util.Util;
 
 import org.json.JSONArray;
@@ -42,8 +42,8 @@ public class UpdateWorker extends Worker {
     private static final int DEFAULT_COLOR = 0xFF333333;
 
     private final AppStateDao mAppStateDao;
-    private final ItemDao mItemDao;
-    private final ItemDetailDao mItemDetailDao;
+    private final ArticleDao mItemDao;
+    private final ArticleDetailDao mItemDetailDao;
 
     public UpdateWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -92,8 +92,8 @@ public class UpdateWorker extends Worker {
                 String publishedDate = jsonObject.getString("published_date");
 
 
-                mItemDao.insert( new Item( id, title, author, thumb, aspectRatio, publishedDate, DEFAULT_COLOR));
-                mItemDetailDao.insert( new ItemDetail( id, body, photo));
+                mItemDao.insert( new Article( id, title, author, thumb, aspectRatio, publishedDate, DEFAULT_COLOR));
+                mItemDetailDao.insert( new ArticleDetail( id, body, photo));
 
 
                 try {

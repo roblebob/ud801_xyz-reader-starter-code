@@ -7,11 +7,11 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 @Dao
-public interface ItemDetailDao {
+public interface ArticleDetailDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert( ItemDetail itemDetail);
+    void insert( ArticleDetail itemDetail);
 
-    @Query("SELECT * FROM ItemDetail WHERE :id = id")
-    LiveData<ItemDetail> loadItemDetailByIdLive(int id);
+    @Query("SELECT * FROM ArticleDetail WHERE :id = id")
+    LiveData<ArticleDetail> loadItemDetailByIdLive(int id);
 }

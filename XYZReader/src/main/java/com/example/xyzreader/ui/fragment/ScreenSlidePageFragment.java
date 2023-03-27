@@ -16,8 +16,8 @@ import android.view.ViewGroup;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.databinding.FragmentScreenSlidePageBinding;
-import com.example.xyzreader.repository.model.Item;
-import com.example.xyzreader.repository.model.ItemDetail;
+import com.example.xyzreader.repository.model.Article;
+import com.example.xyzreader.repository.model.ArticleDetail;
 import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ArticleBodyAdapter;
@@ -38,8 +38,8 @@ public class ScreenSlidePageFragment extends Fragment {
     }
     private FragmentScreenSlidePageBinding mBinding;
     private AppViewModel mViewModel;
-    private Item mItem;
-    private ItemDetail mItemDetail;
+    private Article mItem;
+    private ArticleDetail mItemDetail;
     private ArticleBodyAdapter mArticleBodyAdapter;
 
     /**
@@ -80,7 +80,7 @@ public class ScreenSlidePageFragment extends Fragment {
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
         mViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) appViewModelFactory).get(AppViewModel.class);
         mViewModel.getItemByIdLive( mId).observe( getViewLifecycleOwner(), it -> {
-            Item item = new Item( it);
+            Article item = new Article( it);
 
         });
         mViewModel.getItemDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {

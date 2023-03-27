@@ -6,8 +6,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 
-@Entity(tableName = "Item")
-public class Item {
+@Entity(tableName = "Article")
+public class Article {
 
     @PrimaryKey(autoGenerate = false)       private int    id;
     @ColumnInfo(name = "title")             private String title;
@@ -18,7 +18,7 @@ public class Item {
     @ColumnInfo(name = "color")             private int    color;
 
 
-    public Item(int id, String title, String author, String thumb, double aspectRatio, String publishedDate, int color) {
+    public Article(int id, String title, String author, String thumb, double aspectRatio, String publishedDate, int color) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -29,7 +29,7 @@ public class Item {
     }
 
     @Ignore
-    public Item( Item item) {
+    public Article(Article item) {
         this.id = item.id;
         this.title = item.title;
         this.author = item.author;

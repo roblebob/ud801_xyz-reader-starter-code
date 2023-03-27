@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.xyzreader.R;
-import com.example.xyzreader.repository.model.Item;
+import com.example.xyzreader.repository.model.Article;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 import com.google.android.material.card.MaterialCardView;
 
@@ -36,8 +36,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         this.setHasStableIds(true);
     }
 
-    private ArrayList<Item> mItemList = new ArrayList<>();
-    public void submit(List<Item> itemList) {
+    private ArrayList<Article> mItemList = new ArrayList<>();
+    public void submit(List<Article> itemList) {
         mItemList = new ArrayList<>( itemList);
         // TODO optimize
         notifyDataSetChanged();
@@ -55,7 +55,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Item item = mItemList.get( position);
+        Article item = mItemList.get( position);
 
         holder.cardView.setCardBackgroundColor( item.getColor());
 
