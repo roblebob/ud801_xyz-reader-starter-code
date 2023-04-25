@@ -1,18 +1,9 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
-
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs'
 }
 
-repositories {
-    mavenCentral()
-}
 
 android {
     compileSdk 33
@@ -25,6 +16,9 @@ android {
         viewBinding true
     }
     namespace 'com.example.xyzreader'
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -88,4 +82,5 @@ dependencies {
     // Jetpack Compose Integration
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
 }
