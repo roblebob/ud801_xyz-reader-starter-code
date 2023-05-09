@@ -1,23 +1,17 @@
 package com.example.xyzreader.ui.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.xyzreader.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.ViewHolder> {
-    public static final String TAG = ArticleBodyAdapter.class.getSimpleName();
-
-
     public ArticleBodyAdapter() {
         this.setHasStableIds(true);
     }
@@ -28,7 +22,6 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
         mBodyList = new ArrayList<>(bodyList);
         notifyDataSetChanged();
     }
-
 
 
     @NonNull
@@ -53,7 +46,7 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById( R.id.list_item_body_tv);
+            textView = itemView.findViewById( R.id.list_item_body_tv);
         }
     }
 }

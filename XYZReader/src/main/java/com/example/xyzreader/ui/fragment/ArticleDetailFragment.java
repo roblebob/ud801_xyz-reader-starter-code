@@ -29,19 +29,12 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class ArticleDetailFragment extends Fragment {
-    public static final String TAG = ArticleDetailFragment.class.getSimpleName();
-
-
-    private AppViewModel mViewModel;
     private FragmentArticleDetailBinding mBinding;
     private FragmentStateAdapter mPagerAdapter;
     private List<Integer> mArticleIdList = new ArrayList<>();
     public List<Integer> getArticleIdList() { return mArticleIdList; }
 
-    public ArticleDetailFragment() {
-        // Required empty public constructor
-    }
-
+    public ArticleDetailFragment() { /* Required empty public constructor */ }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -49,11 +42,9 @@ public class ArticleDetailFragment extends Fragment {
 
         mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
 
-
         mBinding.actionUp.setOnClickListener( (view) -> {
             ArticleDetailFragmentDirections.ActionArticleDetailFragmentToArticleListFragment action =
                     ArticleDetailFragmentDirections.actionArticleDetailFragmentToArticleListFragment();
-
 
             int pos = mBinding.pager.getCurrentItem();
             action.setId(mArticleIdList.get(pos));
@@ -63,23 +54,20 @@ public class ArticleDetailFragment extends Fragment {
             navController.navigate( action);
         });
 
-
         mPagerAdapter = new ScreenSlidePagerAdapter( this);
         mBinding.pager.setAdapter( mPagerAdapter);
 
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
-        mViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) appViewModelFactory).get(AppViewModel.class);
+        AppViewModel mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
 
         mViewModel.getItemIdListLive().observe(getViewLifecycleOwner(), list -> {
             mArticleIdList = new ArrayList<>(list);
             mPagerAdapter.notifyDataSetChanged();
         });
 
-
         int id = ArticleDetailFragmentArgs.fromBundle( getArguments()).getId();
         int pos = ArticleDetailFragmentArgs.fromBundle( getArguments()).getPosition();
         mBinding.pager.postDelayed( () -> mBinding.pager.setCurrentItem( pos, false), 100);
-
 
         // moves the back arrow under the system bar
         mBinding.actionUp.setOnApplyWindowInsetsListener( (view, insets) -> {
@@ -89,7 +77,6 @@ public class ArticleDetailFragment extends Fragment {
             view.requestLayout();
             return insets;
         });
-
 
         return mBinding.getRoot();
     }

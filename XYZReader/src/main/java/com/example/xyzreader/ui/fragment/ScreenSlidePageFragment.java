@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
@@ -37,10 +38,8 @@ public class ScreenSlidePageFragment extends Fragment {
         // Required empty public constructor
     }
     private FragmentScreenSlidePageBinding mBinding;
-    private AppViewModel mViewModel;
     private Article mItem;
     private ArticleDetail mItemDetail;
-    private ArticleBodyAdapter mArticleBodyAdapter;
 
     /**
      * Use this factory method to create a new instance of
@@ -69,7 +68,7 @@ public class ScreenSlidePageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
         ArticleBodyAdapter articleBodyAdapter = new ArticleBodyAdapter();
@@ -78,12 +77,11 @@ public class ScreenSlidePageFragment extends Fragment {
 
 
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
-        mViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) appViewModelFactory).get(AppViewModel.class);
-        mViewModel.getItemByIdLive( mId).observe( getViewLifecycleOwner(), it -> {
+        AppViewModel viewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
+        viewModel.getItemByIdLive( mId).observe( getViewLifecycleOwner(), it -> {
             Article item = new Article( it);
-
         });
-        mViewModel.getItemDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
+        viewModel.getItemDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
             articleBodyAdapter.submit( detail.getBody());
 
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
@@ -109,13 +107,6 @@ public class ScreenSlidePageFragment extends Fragment {
                     });
         });
 
-
-
-
-
         return mBinding.getRoot();
     }
-
-
-
 }

@@ -20,7 +20,7 @@
         android:textColorLink="@color/theme_accent"
         android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"
         style="?android:attr/textAppearanceMedium"
-        android:text="default"
+        android:text="@string/list_item_body_tv_text"
         />
 
 

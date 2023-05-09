@@ -2,6 +2,7 @@ package com.example.xyzreader.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -31,7 +32,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         binding = FragmentArticleListBinding.inflate( inflater, container, false);
@@ -57,7 +58,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         binding.recyclerView.setAdapter(articleListAdapter);
 
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory( requireActivity().getApplication());
-        mViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) appViewModelFactory).get(AppViewModel.class);
+        mViewModel = new ViewModelProvider(this,  appViewModelFactory).get(AppViewModel.class);
 
         mViewModel.getItemListLive().observe( getViewLifecycleOwner(), articleListAdapter::submit);
 
