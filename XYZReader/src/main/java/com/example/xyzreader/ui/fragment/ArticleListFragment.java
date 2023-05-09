@@ -24,12 +24,7 @@ import com.example.xyzreader.ui.adapter.ArticleListAdapter;
  */
 public class ArticleListFragment extends Fragment implements ArticleListAdapter.ItemCLickListener {
     public static final String TAG = ArticleListFragment.class.getSimpleName();
-
-    public ArticleListFragment() {
-        // Required empty public constructor
-    }
-
-
+    public ArticleListFragment() { /* Required empty public constructor */ }
     FragmentArticleListBinding binding;
     private boolean mIsRefreshing = false;
     private AppViewModel mViewModel;
@@ -40,7 +35,6 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                              Bundle savedInstanceState) {
 
         binding = FragmentArticleListBinding.inflate( inflater, container, false);
-
 
         binding.appBarLayout .addOnOffsetChangedListener( (appBarLayout1, verticalOffset) -> {
             float alpha = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
@@ -56,7 +50,6 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
             }
         });
 
-
         binding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
 
         // NEW -------------------------------------------------------------------------------------
@@ -68,14 +61,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
         mViewModel.getItemListLive().observe( getViewLifecycleOwner(), articleListAdapter::submit);
 
-        mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> {
-            if (value == null) {
-                mIsRefreshing = false;
-            } else {
-                mIsRefreshing = true;
-            }
-
-        });
+        mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mIsRefreshing = value != null);
         // -----------------------------------------------------------------------------------------
 
         if (savedInstanceState == null) { refresh(); }
