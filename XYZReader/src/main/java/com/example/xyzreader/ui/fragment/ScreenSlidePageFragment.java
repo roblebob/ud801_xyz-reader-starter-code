@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
@@ -34,12 +35,10 @@ public class ScreenSlidePageFragment extends Fragment {
     private static final String POS = "pos";
     private int mId;
     private int mPos;
-    public ScreenSlidePageFragment() {
-        // Required empty public constructor
-    }
+    public ScreenSlidePageFragment() { /* Required empty public constructor */ }
     private FragmentScreenSlidePageBinding mBinding;
-    private Article mItem;
-    private ArticleDetail mItemDetail;
+    private Article mArticle;
+    private ArticleDetail mArticleDetail;
 
     /**
      * Use this factory method to create a new instance of
@@ -71,17 +70,20 @@ public class ScreenSlidePageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
+
         ArticleBodyAdapter articleBodyAdapter = new ArticleBodyAdapter();
         mBinding.articleBodyRv.setAdapter( articleBodyAdapter);
         mBinding.articleBodyRv.setLayoutManager( new LinearLayoutManager( mBinding.getRoot().getContext()));
 
-
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
         AppViewModel viewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
-        viewModel.getItemByIdLive( mId).observe( getViewLifecycleOwner(), it -> {
-            Article item = new Article( it);
+        viewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
+            mArticle = new Article( article);
+            mBinding.materialToolbar.setTitle(article.getTitle());
+            mBinding.materialToolbar.setSubtitle(article.getAuthor());
+            ((AppCompatActivity) requireActivity()).setSupportActionBar(mBinding.materialToolbar);
         });
-        viewModel.getItemDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
+        viewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
             articleBodyAdapter.submit( detail.getBody());
 
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
@@ -106,6 +108,8 @@ public class ScreenSlidePageFragment extends Fragment {
                         }
                     });
         });
+
+
 
         return mBinding.getRoot();
     }

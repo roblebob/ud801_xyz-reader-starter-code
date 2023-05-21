@@ -22,11 +22,11 @@ public interface ArticleDao {
 
 
     @Query("SELECT * FROM Article ORDER BY publishedDate DESC")
-    LiveData<List<Article>> loadItemListLive();
+    LiveData<List<Article>> loadArticleListLive();
 
     @Query("SELECT id FROM Article ORDER BY publishedDate DESC")
-    LiveData<List<Integer>> loadItemIdListLive();
+    LiveData<List<Integer>> loadArticleIdListLive();
 
     @Query("SELECT * FROM Article WHERE :id = id")
-    LiveData<Article> loadItemByIdLive(int id);
+    LiveData<Article> loadArticleByIdLive(int id);
 }

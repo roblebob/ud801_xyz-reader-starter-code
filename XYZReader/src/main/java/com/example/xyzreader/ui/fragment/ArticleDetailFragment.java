@@ -60,7 +60,7 @@ public class ArticleDetailFragment extends Fragment {
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
         AppViewModel mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
 
-        mViewModel.getItemIdListLive().observe(getViewLifecycleOwner(), list -> {
+        mViewModel.getArticleIdListLive().observe(getViewLifecycleOwner(), list -> {
             mArticleIdList = new ArrayList<>(list);
             mPagerAdapter.notifyDataSetChanged();
         });

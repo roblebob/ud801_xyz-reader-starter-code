@@ -60,7 +60,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory( requireActivity().getApplication());
         mViewModel = new ViewModelProvider(this,  appViewModelFactory).get(AppViewModel.class);
 
-        mViewModel.getItemListLive().observe( getViewLifecycleOwner(), articleListAdapter::submit);
+        mViewModel.getArticleListLive().observe( getViewLifecycleOwner(), articleListAdapter::submit);
 
         mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mIsRefreshing = value != null);
         // -----------------------------------------------------------------------------------------

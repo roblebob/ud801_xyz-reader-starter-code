@@ -21,10 +21,10 @@ public class ArticleDetail {
     }
 
     @Ignore
-    public ArticleDetail(ArticleDetail itemDetail) {
-        this.id = itemDetail.id;
-        this.body = itemDetail.body;
-        this.photo = itemDetail.photo;
+    public ArticleDetail(ArticleDetail articleDetail) {
+        this.id = articleDetail.id;
+        this.body = articleDetail.body;
+        this.photo = articleDetail.photo;
     }
 
     public int getId() {
