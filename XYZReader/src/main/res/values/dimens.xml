@@ -2,7 +2,7 @@
     <!-- master -->
 
 
-    <dimen name="master_appbar_height">283dp</dimen> <!-- layout_height taken 740dp as temporary fixed heigth multiplay by goldenratio, in detail: 740dp *  (1  - 2 / (1 + sqrt(5)))   = 282.65484832507786 (https://en.wikipedia.org/wiki/Golden_ratio) -->
+    <dimen name="appbar_height">283dp</dimen> <!-- layout_height taken 740dp as temporary fixed heigth multiplay by goldenratio, in detail: 740dp *  (1  - 2 / (1 + sqrt(5)))   = 282.65484832507786 (https://en.wikipedia.org/wiki/Golden_ratio) -->
 
 
 

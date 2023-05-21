@@ -96,7 +96,7 @@ public class ScreenSlidePageFragment extends Fragment {
                                 Palette p = Palette.from(bitmap).generate();
                                 int mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 mBinding.photo.setImageBitmap( imageContainer.getBitmap());
-                                mBinding.materialToolbar .setBackgroundColor(mMutedColor);
+                                //mBinding.materialToolbar .setBackgroundColor(mMutedColor);
                                 mBinding.shareFab.setBackgroundTintList(ColorStateList.valueOf( mMutedColor));
                                 //updateStatusBar();
                             }

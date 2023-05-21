@@ -13,7 +13,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/appbar_height"
         app:liftOnScroll="true"
         android:fitsSystemWindows="true"
         >
@@ -24,13 +24,14 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:maxLines="2"
             >
 
 
             <ImageView
                 android:id="@+id/photo"
                 android:layout_width="match_parent"
-                android:layout_height="304dp"
+                android:layout_height="match_parent"
                 android:src="@drawable/sonofthewolf"
                 android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
@@ -44,28 +45,14 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/material_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:minHeight="?attr/actionBarSize"
                 android:background="@android:color/transparent"
-                android:layout_gravity="bottom"
+                android:elevation="0dp"
                 app:layout_collapseMode="pin"
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:subtitle="subtitle"
                 >
-
-                <!--androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="defaul"
-                        app:layout_constraintHorizontal_bias="0.376"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
-
-                </androidx.constraintlayout.widget.ConstraintLayout-->
 
 
             </com.google.android.material.appbar.MaterialToolbar>
