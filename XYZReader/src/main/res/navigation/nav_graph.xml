@@ -23,13 +23,13 @@
         <argument
             android:name="id"
             app:argType="integer"
-            android:defaultValue="1"
+            android:defaultValue="-1"
             />
 
         <argument
             android:name="position"
             app:argType="integer"
-            android:defaultValue="0"
+            android:defaultValue="-1"
             />
 
 

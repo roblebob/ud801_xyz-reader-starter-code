@@ -7,11 +7,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.FragmentNavigator;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.repository.model.Article;
+import com.example.xyzreader.ui.fragment.ArticleListFragment;
+import com.example.xyzreader.ui.fragment.ArticleListFragmentDirections;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 import com.google.android.material.card.MaterialCardView;
 
@@ -28,11 +33,16 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
     public interface ItemCLickListener { void onItemCLickListener( int id, int pos); }
     ItemCLickListener mItemCLickListener;
+    ArticleListFragment mArticleListFragment;
+
+    NavController mNavController;
 
 
-    public ArticleListAdapter(Context context, ItemCLickListener itemCLickListener) {
+
+    public ArticleListAdapter(Context context, ItemCLickListener itemCLickListener, NavController navController) {
         mContext = context;
         mItemCLickListener = itemCLickListener;
+        mNavController = navController;
         this.setHasStableIds(true);
     }
 
@@ -68,10 +78,25 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         holder.thumbnailView.setImageUrl( item.getThumb(),
                 ImageLoaderHelper.getInstance( mContext).getImageLoader());
+        holder.thumbnailView.setTransitionName( String.valueOf( item.getId()));
 
-        holder.thumbnailView.setTransitionName( item.getTitle());
+        holder.itemView.setOnClickListener(view1 ->
+                {
+                    //mItemCLickListener.onItemCLickListener( item.getId(), position);
 
-        holder.itemView.setOnClickListener(view1 -> mItemCLickListener.onItemCLickListener( item.getId(), position));
+                    com.example.xyzreader.ui.fragment.ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
+                            ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
+
+                    action.setId( item.getId());
+                    action.setPosition( position);
+
+                    FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
+                            .addSharedElement( holder.thumbnailView, holder.thumbnailView.getTransitionName())
+                            .build();
+
+                    mNavController.navigate( action, extras);
+                }
+        );
     }
 
     @Override

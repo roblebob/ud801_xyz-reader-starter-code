@@ -3,16 +3,22 @@ package com.example.xyzreader.ui.fragment;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentArticleDetailBinding;
 import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
@@ -20,6 +26,7 @@ import com.example.xyzreader.ui.adapter.ScreenSlidePagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // IMPORTANT NOTE:
 //      This replaces the old ArticleDetailActivity, not the old ArticleDetailFragment.
@@ -29,6 +36,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class ArticleDetailFragment extends Fragment {
+    public static final String TAG = ArticleDetailFragment.class.getSimpleName();
+
     private FragmentArticleDetailBinding mBinding;
     private FragmentStateAdapter mPagerAdapter;
     private List<Integer> mArticleIdList = new ArrayList<>();
@@ -37,8 +46,20 @@ public class ArticleDetailFragment extends Fragment {
     public ArticleDetailFragment() { /* Required empty public constructor */ }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Transition transition = TransitionInflater.from( requireContext())
+                .inflateTransition( R.transition.image_shared_element_transition);
+
+        setSharedElementEnterTransition( transition);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        postponeEnterTransition();
 
         mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
 
@@ -67,7 +88,7 @@ public class ArticleDetailFragment extends Fragment {
 
         int id = ArticleDetailFragmentArgs.fromBundle( getArguments()).getId();
         int pos = ArticleDetailFragmentArgs.fromBundle( getArguments()).getPosition();
-        mBinding.pager.postDelayed( () -> mBinding.pager.setCurrentItem( pos, false), 100);
+
 
         // moves the back arrow under the system bar
         mBinding.actionUp.setOnApplyWindowInsetsListener( (view, insets) -> {
@@ -77,6 +98,44 @@ public class ArticleDetailFragment extends Fragment {
             view.requestLayout();
             return insets;
         });
+
+
+
+        mBinding.pager.postDelayed( () -> {
+            mBinding.pager.setCurrentItem(pos, false);
+
+
+
+
+            }, 100);
+
+        setEnterSharedElementCallback(
+                new SharedElementCallback() {
+                    @Override
+                    public void onMapSharedElements( List<String> names, Map<String, View> sharedElements) {
+                        // Locate the image view at the primary fragment (the ImageFragment
+                        // that is currently visible). To locate the fragment, call
+                        // instantiateItem with the selection position.
+                        // At this stage, the method will simply return the fragment at the
+                        // position and will not create a new one.
+
+                        Fragment currentFragment = getChildFragmentManager().findFragmentByTag("f" + pos);
+                        if (currentFragment == null) {
+                            Log.e(TAG, "onMapSharedElements: currentFragment is null");
+                            return;
+                        }
+                        View view = currentFragment.getView();
+                        if (view == null) {
+                            Log.e(TAG, "onMapSharedElements: view is null");
+                            return;
+                        }
+
+                        Log.e(TAG, names.get(0) + " " + view.findViewById(R.id.photo));
+
+                        // Map the first shared element name to the child ImageView.
+                        sharedElements.put(names.get(0), view.findViewById(R.id.photo));
+                    }
+                });
 
         return mBinding.getRoot();
     }

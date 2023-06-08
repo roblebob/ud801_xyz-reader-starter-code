@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentScreenSlidePageBinding;
 import com.example.xyzreader.repository.model.Article;
 import com.example.xyzreader.repository.model.ArticleDetail;
@@ -37,8 +40,7 @@ public class ScreenSlidePageFragment extends Fragment {
     private int mPos;
     public ScreenSlidePageFragment() { /* Required empty public constructor */ }
     private FragmentScreenSlidePageBinding mBinding;
-    private Article mArticle;
-    private ArticleDetail mArticleDetail;
+
 
     /**
      * Use this factory method to create a new instance of
@@ -70,6 +72,7 @@ public class ScreenSlidePageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
+        mBinding.photo.setTransitionName( String.valueOf( mId));
 
         ArticleBodyAdapter articleBodyAdapter = new ArticleBodyAdapter();
         mBinding.articleBodyRv.setAdapter( articleBodyAdapter);
@@ -78,10 +81,7 @@ public class ScreenSlidePageFragment extends Fragment {
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
         AppViewModel viewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
         viewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
-            mArticle = new Article( article);
             mBinding.materialToolbar.setTitle(article.getTitle());
-            mBinding.materialToolbar.setSubtitle(article.getAuthor());
-            ((AppCompatActivity) requireActivity()).setSupportActionBar(mBinding.materialToolbar);
         });
         viewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
             articleBodyAdapter.submit( detail.getBody());
@@ -99,12 +99,17 @@ public class ScreenSlidePageFragment extends Fragment {
                                 //mBinding.materialToolbar .setBackgroundColor(mMutedColor);
                                 mBinding.shareFab.setBackgroundTintList(ColorStateList.valueOf( mMutedColor));
                                 //updateStatusBar();
+                                if (getParentFragment() != null) {
+                                    getParentFragment().startPostponedEnterTransition();
+                                }
                             }
                         }
 
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-
+                            if (getParentFragment() != null) {
+                                getParentFragment().startPostponedEnterTransition();
+                            }
                         }
                     });
         });
