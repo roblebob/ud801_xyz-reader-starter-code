@@ -37,31 +37,54 @@ import java.util.Map;
  */
 public class ArticleDetailFragment extends Fragment {
     public static final String TAG = ArticleDetailFragment.class.getSimpleName();
-
     private FragmentArticleDetailBinding mBinding;
-    private FragmentStateAdapter mPagerAdapter;
+    //private FragmentStateAdapter mPagerAdapter;
     private List<Integer> mArticleIdList = new ArrayList<>();
     public List<Integer> getArticleIdList() { return mArticleIdList; }
-
     public ArticleDetailFragment() { /* Required empty public constructor */ }
+
+
+    private AppViewModel mViewModel;
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Transition transition = TransitionInflater.from( requireContext())
-                .inflateTransition( R.transition.image_shared_element_transition);
+        AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
+        mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
 
-        setSharedElementEnterTransition( transition);
+        //mPagerAdapter = new ScreenSlidePagerAdapter( this);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        postponeEnterTransition();
-
         mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
+        //mBinding.pager.setAdapter( mPagerAdapter);
+        mBinding.pager.setAdapter( new ScreenSlidePagerAdapter( this));
+
+
+        mViewModel.getArticleIdListLive().observe(getViewLifecycleOwner(), list -> {
+            mArticleIdList = new ArrayList<>(list);
+            //mPagerAdapter.notifyDataSetChanged();
+            mBinding.pager.getAdapter().notifyDataSetChanged();
+            mBinding.pager.setCurrentItem( ArticleDetailFragmentArgs.fromBundle( getArguments()).getPosition(), false);
+        });
+
+
+
+
+        // moves the back arrow under the system bar
+        mBinding.actionUp.setOnApplyWindowInsetsListener( (view, insets) -> {
+            int statusBarSize = insets.getSystemWindowInsetTop();
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            p.setMargins(0, statusBarSize, 0, 0);
+            view.requestLayout();
+            return insets;
+        });
 
         mBinding.actionUp.setOnClickListener( (view) -> {
             ArticleDetailFragmentDirections.ActionArticleDetailFragmentToArticleListFragment action =
@@ -75,39 +98,22 @@ public class ArticleDetailFragment extends Fragment {
             navController.navigate( action);
         });
 
-        mPagerAdapter = new ScreenSlidePagerAdapter( this);
-        mBinding.pager.setAdapter( mPagerAdapter);
 
-        AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
-        AppViewModel mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
 
-        mViewModel.getArticleIdListLive().observe(getViewLifecycleOwner(), list -> {
-            mArticleIdList = new ArrayList<>(list);
-            mPagerAdapter.notifyDataSetChanged();
-        });
+        return mBinding.getRoot();
+    }
 
-        int id = ArticleDetailFragmentArgs.fromBundle( getArguments()).getId();
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Transition transition = TransitionInflater.from( requireContext())
+                .inflateTransition( R.transition.image_shared_element_transition);
+
+        setSharedElementEnterTransition( transition);
+
         int pos = ArticleDetailFragmentArgs.fromBundle( getArguments()).getPosition();
-
-
-        // moves the back arrow under the system bar
-        mBinding.actionUp.setOnApplyWindowInsetsListener( (view, insets) -> {
-            int statusBarSize = insets.getSystemWindowInsetTop();
-            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            p.setMargins(0, statusBarSize, 0, 0);
-            view.requestLayout();
-            return insets;
-        });
-
-
-
-        mBinding.pager.postDelayed( () -> {
-            mBinding.pager.setCurrentItem(pos, false);
-
-
-
-
-            }, 100);
 
         setEnterSharedElementCallback(
                 new SharedElementCallback() {
@@ -118,6 +124,8 @@ public class ArticleDetailFragment extends Fragment {
                         // instantiateItem with the selection position.
                         // At this stage, the method will simply return the fragment at the
                         // position and will not create a new one.
+
+
 
                         Fragment currentFragment = getChildFragmentManager().findFragmentByTag("f" + pos);
                         if (currentFragment == null) {
@@ -137,9 +145,14 @@ public class ArticleDetailFragment extends Fragment {
                     }
                 });
 
-        return mBinding.getRoot();
-    }
+        postponeEnterTransition();
 
+        //mBinding.pager.postDelayed( () -> { mBinding.pager.setCurrentItem(pos, false); }, 100);
+
+
+
+
+    }
 
     @Override
     public void onDestroyView() {

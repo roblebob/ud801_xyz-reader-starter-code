@@ -39,8 +39,9 @@ public class ScreenSlidePageFragment extends Fragment {
     private int mId;
     private int mPos;
     public ScreenSlidePageFragment() { /* Required empty public constructor */ }
+    private ArticleBodyAdapter mArticleBodyAdapter;
+    private AppViewModel mViewModel;
     private FragmentScreenSlidePageBinding mBinding;
-
 
     /**
      * Use this factory method to create a new instance of
@@ -66,6 +67,11 @@ public class ScreenSlidePageFragment extends Fragment {
             mId = getArguments().getInt(ID);
             mPos = getArguments().getInt(POS);
         }
+
+        AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
+        mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
+
+        mArticleBodyAdapter = new ArticleBodyAdapter();
     }
 
     @Override
@@ -73,18 +79,16 @@ public class ScreenSlidePageFragment extends Fragment {
         mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
         mBinding.photo.setTransitionName( String.valueOf( mId));
-
-        ArticleBodyAdapter articleBodyAdapter = new ArticleBodyAdapter();
-        mBinding.articleBodyRv.setAdapter( articleBodyAdapter);
+        mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
         mBinding.articleBodyRv.setLayoutManager( new LinearLayoutManager( mBinding.getRoot().getContext()));
 
-        AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
-        AppViewModel viewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
-        viewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
-            mBinding.materialToolbar.setTitle(article.getTitle());
+
+        mViewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
+            mBinding.materialToolbar.setTitle( article.getTitle());
+            mBinding.shareFab.setBackgroundTintList( ColorStateList.valueOf( article.getColor()));
         });
-        viewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
-            articleBodyAdapter.submit( detail.getBody());
+        mViewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
+            mArticleBodyAdapter.submit( detail.getBody());
 
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(detail.getPhoto(), new ImageLoader.ImageListener() {
@@ -92,13 +96,10 @@ public class ScreenSlidePageFragment extends Fragment {
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
-                                // Palette p = Palette.generate(bitmap, 12);
-                                Palette p = Palette.from(bitmap).generate();
-                                int mMutedColor = p.getDarkMutedColor(0xFF333333);
+//                                Palette p = Palette.from(bitmap).generate();
+//                                int mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 mBinding.photo.setImageBitmap( imageContainer.getBitmap());
-                                //mBinding.materialToolbar .setBackgroundColor(mMutedColor);
-                                mBinding.shareFab.setBackgroundTintList(ColorStateList.valueOf( mMutedColor));
-                                //updateStatusBar();
+//                                mBinding.shareFab.setBackgroundTintList(ColorStateList.valueOf( mMutedColor));
                                 if (getParentFragment() != null) {
                                     getParentFragment().startPostponedEnterTransition();
                                 }

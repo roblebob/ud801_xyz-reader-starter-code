@@ -5,13 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,7 +35,7 @@ import java.util.Objects;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ArticleListFragment extends Fragment implements ArticleListAdapter.ItemCLickListener {
+public class ArticleListFragment extends Fragment {
     public static final String TAG = ArticleListFragment.class.getSimpleName();
     public ArticleListFragment() { /* Required empty public constructor */ }
     FragmentArticleListBinding mBinding;
@@ -50,6 +52,9 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        AppViewModelFactory appViewModelFactory = new AppViewModelFactory( requireActivity().getApplication());
+        mViewModel = new ViewModelProvider(this,  appViewModelFactory).get(AppViewModel.class);
+
         mPosition = ArticleListFragmentArgs.fromBundle( requireArguments()).getPosition();
         mId = ArticleListFragmentArgs.fromBundle( requireArguments()).getId();
     }
@@ -61,70 +66,52 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                              Bundle savedInstanceState) {
 
         mBinding = FragmentArticleListBinding.inflate( inflater, container, false);
-
-        mBinding.appBarLayout .addOnOffsetChangedListener( (appBarLayout1, verticalOffset) -> {
-            float alpha = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
-            Log.e(TAG, "----> " + verticalOffset + "  " + alpha );
-            appBarLayout1.setAlpha(alpha);
-            mBinding.recyclerView.setAlpha( 1.0f - alpha);
-
-            mBinding.logoIv.setScaleX( alpha);
-            mBinding.logoIv.setScaleY( alpha);
-
-            if (!mIsRefreshing && mBinding.swipeRefreshLayout.isRefreshing()) {
-                updateRefreshingUI();
-            }
-        });
-
+        mArticleListAdapter = new ArticleListAdapter( getContext(), NavHostFragment.findNavController( this));
         mBinding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
-        mArticleListAdapter = new ArticleListAdapter( getContext(), this, NavHostFragment.findNavController( this));
-        mBinding.recyclerView.setAdapter(mArticleListAdapter);
-
-        AppViewModelFactory appViewModelFactory = new AppViewModelFactory( requireActivity().getApplication());
-        mViewModel = new ViewModelProvider(this,  appViewModelFactory).get(AppViewModel.class);
-
-
-        mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mIsRefreshing = value != null);
-
-        if (savedInstanceState == null) { refresh(); }
-
-
-
+        mBinding.recyclerView .setAdapter( mArticleListAdapter);
+        if (mId > 0) { mBinding.appBarLayout.setExpanded(false); }
+        prepareTransitions();
         return mBinding.getRoot();
     }
 
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //super.onViewCreated(view, savedInstanceState);
+    private void prepareTransitions() {
+        TransitionInflater inflater = TransitionInflater.from( requireContext());
+        Transition transition = inflater.inflateTransition( R.transition.grid_exit_transition);
+        setExitTransition( transition);
 
-        if (mPosition >= 0) {
+        setExitSharedElementCallback( new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                super.onMapSharedElements(names, sharedElements);
 
-            mBinding.appBarLayout.setExpanded( false);
+                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
+                        .findViewHolderForAdapterPosition(mPosition);
 
-            setExitSharedElementCallback( new SharedElementCallback() {
-                @Override
-                public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                    super.onMapSharedElements(names, sharedElements);
+                if (viewHolder == null) { return; }
 
-                    sharedElements.put( names.get(0),
-                            Objects.requireNonNull(
-                                    mBinding.recyclerView.findViewHolderForAdapterPosition(mPosition)
-                            ) .itemView.findViewById( R.id.thumbnail));
-                }
-            });
-        }
+                sharedElements.put( names.get(0), viewHolder.itemView.findViewById( R.id.thumbnail));
+            }
+        });
 
         postponeEnterTransition();
+    }
+
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mIsRefreshing = value != null);
 
         final ViewGroup parentView = (ViewGroup) view.getParent();
-
         mViewModel.getArticleListLive().observe(getViewLifecycleOwner(),
                 new Observer<List<Article>>() {
                     @Override
                     public void onChanged(List<Article> articles) {
                         mArticleListAdapter.submit( articles);
-                        mBinding.recyclerView.scrollToPosition( mPosition);
+                        mBinding.recyclerView.scrollToPosition( mPosition );
 
                         parentView.getViewTreeObserver()
                                 .addOnPreDrawListener(
@@ -143,14 +130,52 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         );
     }
 
+
+
+
+
+
+
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        Log.d(TAG, "------> onViewStateRestored()");
+
+        if (savedInstanceState == null) { refresh(); }
+
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mBinding.appBarLayout .addOnOffsetChangedListener( (appBarLayout1, verticalOffset) -> {
+
+            float ratio = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
+            Log.d(TAG, "----> " + verticalOffset + "  " + ratio );
+
+            appBarLayout1.setAlpha(ratio);
+            mBinding.recyclerView.setAlpha( 1.0f - ratio);
+            mBinding.logoIv.setScaleX( ratio);
+            mBinding.logoIv.setScaleY( ratio);
+
+            if (!mIsRefreshing && mBinding.swipeRefreshLayout.isRefreshing()) {
+                updateRefreshingUI();
+            }
+        });
+    }
+
     private void refresh() {
-        Log.e(TAG, "------> refresh()");
+        Log.d(TAG, "------> refresh()");
         mViewModel.refresh();
     }
 
 
     private void updateRefreshingUI() {
-        Log.e(TAG, "------> updateRefreshingUI()");
+        Log.d(TAG, "------> updateRefreshingUI()");
         mBinding.swipeRefreshLayout .setRefreshing(mIsRefreshing);
     }
 
@@ -161,18 +186,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         mBinding = null;
     }
 
-    @Override
-    public void onItemCLickListener(int id, int pos) {
-        ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
-                ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
 
-        action.setId( id);
-        action.setPosition( pos);
-
-        NavController navController = NavHostFragment.findNavController( this);
-
-        navController.navigate( action);
-    }
 }
 
 

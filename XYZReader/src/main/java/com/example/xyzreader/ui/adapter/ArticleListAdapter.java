@@ -29,19 +29,10 @@ import java.util.Locale;
 
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.ViewHolder> {
     private final Context mContext;
-
-
-    public interface ItemCLickListener { void onItemCLickListener( int id, int pos); }
-    ItemCLickListener mItemCLickListener;
-    ArticleListFragment mArticleListFragment;
-
     NavController mNavController;
 
-
-
-    public ArticleListAdapter(Context context, ItemCLickListener itemCLickListener, NavController navController) {
+    public ArticleListAdapter(Context context, NavController navController) {
         mContext = context;
-        mItemCLickListener = itemCLickListener;
         mNavController = navController;
         this.setHasStableIds(true);
     }
@@ -80,9 +71,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
                 ImageLoaderHelper.getInstance( mContext).getImageLoader());
         holder.thumbnailView.setTransitionName( String.valueOf( item.getId()));
 
-        holder.itemView.setOnClickListener(view1 ->
-                {
-                    //mItemCLickListener.onItemCLickListener( item.getId(), position);
+        holder.itemView.setOnClickListener(view1 -> {
 
                     com.example.xyzreader.ui.fragment.ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
                             ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
