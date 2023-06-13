@@ -95,6 +95,7 @@ public class UpdateWorker extends Worker {
 
         if (oldChecksum != null && oldChecksum.equals(newChecksum)) {
             mAppStateDao.insert( new AppState("refreshing", null));
+            Log.d(TAG, "nothing to be updated");
             return Result.success();
         }
 
