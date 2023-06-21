@@ -4,6 +4,6 @@
     android:interpolator="@android:interpolator/fast_out_slow_in"
     android:startDelay="25">
     <fade>
-        <targets android:targetId="@id/list_item_article_cardview"/>
+        <targets android:targetId="@id/artle_body_rv"/>
     </fade>
 </transitionSet>

@@ -1,6 +1,6 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/list_item_artical_cardview"
+    android:id="@+id/list_item_article_cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="4dp"
@@ -15,23 +15,25 @@
     app:strokeWidth="2dp"
     >
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        >
 
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sonofthewolf"
-
+            android:src="@drawable/books_g52abbdc89_1920"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/list_item_article__author_tv"
+            app:layout_constraintTop_toTopOf="parent"
             />
-            <!--
-            android:background="@color/photo_placeholder"
-            -->
+                   <!--
+                   android:background="@color/photo_placeholder"
+                   -->
 
 
 
@@ -48,6 +50,11 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:alpha="0.5"
+            android:text="author"
+
+            app:layout_constraintTop_toBottomOf="@id/thumbnail"
+            app:layout_constraintBottom_toTopOf="@+id/list_item_article__title_tv"
+            app:layout_constraintRight_toRightOf="parent"
             />
         <!--
             android:textColor="#6000"
@@ -67,6 +74,10 @@
             android:paddingBottom="0dp"
             android:ellipsize="end"
             android:maxLines="2"
+            android:text="book title"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/list_item_article__author_tv"
+            app:layout_constraintBottom_toTopOf="@+id/list_item_article__year_tv"
             />
             <!--
             android:textColor="@color/ltgray"
@@ -87,7 +98,34 @@
             android:ellipsize="end"
             android:gravity="end"
             android:alpha="0.4"
+            android:text="1900"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/list_item_article__title_tv"
+            app:layout_constraintBottom_toBottomOf="parent"
             />
-    </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_item_article__pos"
+            android:text="-1"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_item_article__id"
+            android:text="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:padding="4dp"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

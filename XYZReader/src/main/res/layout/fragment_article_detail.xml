@@ -8,7 +8,7 @@
     tools:context=".ui.fragment.ArticleDetailFragment">
 
 
-    <ImageButton
+    <!--ImageButton
         android:id="@+id/action_up"
         android:layout_width="?actionBarSize"
         android:layout_height="?actionBarSize"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:elevation="4dp"
-        />
+        /-->
 
     <!--FrameLayout
         android:id="@+id/up_container"

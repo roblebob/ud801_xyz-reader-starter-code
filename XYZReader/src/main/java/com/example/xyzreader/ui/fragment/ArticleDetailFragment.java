@@ -76,7 +76,7 @@ public class ArticleDetailFragment extends Fragment {
 
 
 
-
+/*
         // moves the back arrow under the system bar
         mBinding.actionUp.setOnApplyWindowInsetsListener( (view, insets) -> {
             int statusBarSize = insets.getSystemWindowInsetTop();
@@ -97,6 +97,7 @@ public class ArticleDetailFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController( this);
             navController.navigate( action);
         });
+*/
 
 
 
@@ -113,7 +114,7 @@ public class ArticleDetailFragment extends Fragment {
 
         setSharedElementEnterTransition( transition);
 
-        int pos = ArticleDetailFragmentArgs.fromBundle( getArguments()).getPosition();
+        int pos = ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition();
 
         setEnterSharedElementCallback(
                 new SharedElementCallback() {

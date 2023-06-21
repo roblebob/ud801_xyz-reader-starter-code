@@ -52,11 +52,15 @@ public class ArticleListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory( requireActivity().getApplication());
         mViewModel = new ViewModelProvider(this,  appViewModelFactory).get(AppViewModel.class);
 
         mPosition = ArticleListFragmentArgs.fromBundle( requireArguments()).getPosition();
         mId = ArticleListFragmentArgs.fromBundle( requireArguments()).getId();
+
+        Log.e(TAG, "onCreate: " + "id:" + mId + "  " + "pos:" + mPosition);
+
     }
 
 
@@ -66,7 +70,7 @@ public class ArticleListFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mBinding = FragmentArticleListBinding.inflate( inflater, container, false);
-        mArticleListAdapter = new ArticleListAdapter( getContext(), NavHostFragment.findNavController( this));
+        mArticleListAdapter = new ArticleListAdapter(  this);
         mBinding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
         mBinding.recyclerView .setAdapter( mArticleListAdapter);
         if (mId > 0) { mBinding.appBarLayout.setExpanded(false); }
@@ -80,21 +84,19 @@ public class ArticleListFragment extends Fragment {
         Transition transition = inflater.inflateTransition( R.transition.grid_exit_transition);
         setExitTransition( transition);
 
-        setExitSharedElementCallback( new SharedElementCallback() {
-            @Override
-            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                super.onMapSharedElements(names, sharedElements);
-
-                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
-                        .findViewHolderForAdapterPosition(mPosition);
-
-                if (viewHolder == null) { return; }
-
-                sharedElements.put( names.get(0), viewHolder.itemView.findViewById( R.id.thumbnail));
-            }
-        });
-
-        postponeEnterTransition();
+//        setExitSharedElementCallback( new SharedElementCallback() {
+//            @Override
+//            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+//                super.onMapSharedElements(names, sharedElements);
+//
+//                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
+//                        .findViewHolderForAdapterPosition(mPosition);
+//
+//                if (viewHolder == null) { return; }
+//
+//                sharedElements.put( names.get(0), viewHolder.itemView.findViewById( R.id.thumbnail));
+//            }
+//        });
     }
 
 
@@ -102,6 +104,8 @@ public class ArticleListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        postponeEnterTransition();
 
         mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mIsRefreshing = value != null);
 

@@ -11,6 +11,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionSet;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.xyzreader.R;
@@ -31,9 +32,12 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     private final Context mContext;
     NavController mNavController;
 
-    public ArticleListAdapter(Context context, NavController navController) {
-        mContext = context;
-        mNavController = navController;
+    ArticleListFragment mArticleListFragment;
+
+    public ArticleListAdapter(ArticleListFragment articleListFragment) {
+        mArticleListFragment = articleListFragment;
+        mContext = mArticleListFragment.requireContext();
+        mNavController =  NavHostFragment.findNavController( mArticleListFragment);
         this.setHasStableIds(true);
     }
 
@@ -59,7 +63,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         Article item = mItemList.get( position);
 
         holder.cardView.setCardBackgroundColor( item.getColor());
-
         holder.titleView.setText( item.getTitle());
 
         holder.yearView.setText( String.format( Locale.getDefault(),"%d",
@@ -67,17 +70,47 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         holder.authorView.setText( item.getAuthor());
 
-        holder.thumbnailView.setImageUrl( item.getThumb(),
-                ImageLoaderHelper.getInstance( mContext).getImageLoader());
+        holder.idView.setText( String.valueOf( item.getId()));
+        holder.posView.setText( String.valueOf( position));
+
+
+        holder.thumbnailView.setImageUrl( item.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
+
+
+        holder.thumbnailView.addOnAttachStateChangeListener( new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View view) {
+                mArticleListFragment.startPostponedEnterTransition();
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View view) {
+
+            }
+        });
+
+
+
         holder.thumbnailView.setTransitionName( String.valueOf( item.getId()));
 
+
+
+
+
+
+
         holder.itemView.setOnClickListener(view1 -> {
+
+
+
+                    ((TransitionSet) mArticleListFragment.getExitTransition())
+                            .excludeTarget(view1, true);
 
                     com.example.xyzreader.ui.fragment.ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
                             ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
 
                     action.setId( item.getId());
-                    action.setPosition( position);
+            action.setPosition( position);
 
                     FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
                             .addSharedElement( holder.thumbnailView, holder.thumbnailView.getTransitionName())
@@ -104,13 +137,18 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         public TextView authorView;
         public TextView yearView;
 
+        public TextView idView;
+        public TextView posView;
+
         public ViewHolder(View view) {
             super(view);
-            cardView = view.findViewById(R.id.list_item_artical_cardview);
+            cardView = view.findViewById(R.id.list_item_article_cardview);
             thumbnailView = view.findViewById(R.id.thumbnail);
             titleView = view.findViewById(R.id.list_item_article__title_tv);
             authorView = view.findViewById(R.id.list_item_article__author_tv);
             yearView = view.findViewById(R.id.list_item_article__year_tv);
+            idView = view.findViewById(R.id.list_item_article__id);
+            posView = view.findViewById(R.id.list_item_article__pos);
         }
     }
 }
