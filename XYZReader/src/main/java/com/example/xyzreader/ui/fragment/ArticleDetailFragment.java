@@ -38,7 +38,7 @@ import java.util.Map;
 public class ArticleDetailFragment extends Fragment {
     public static final String TAG = ArticleDetailFragment.class.getSimpleName();
     private FragmentArticleDetailBinding mBinding;
-    //private FragmentStateAdapter mPagerAdapter;
+    private FragmentStateAdapter mPagerAdapter;
     private List<Integer> mArticleIdList = new ArrayList<>();
     public List<Integer> getArticleIdList() { return mArticleIdList; }
     public ArticleDetailFragment() { /* Required empty public constructor */ }
@@ -55,7 +55,7 @@ public class ArticleDetailFragment extends Fragment {
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
         mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
 
-        //mPagerAdapter = new ScreenSlidePagerAdapter( this);
+        mPagerAdapter = new ScreenSlidePagerAdapter( this);
     }
 
     @Override
@@ -63,15 +63,13 @@ public class ArticleDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
-        //mBinding.pager.setAdapter( mPagerAdapter);
-        mBinding.pager.setAdapter( new ScreenSlidePagerAdapter( this));
+        mBinding.pager.setAdapter( mPagerAdapter);
 
 
         mViewModel.getArticleIdListLive().observe(getViewLifecycleOwner(), list -> {
             mArticleIdList = new ArrayList<>(list);
-            //mPagerAdapter.notifyDataSetChanged();
-            mBinding.pager.getAdapter().notifyDataSetChanged();
-            mBinding.pager.setCurrentItem( ArticleDetailFragmentArgs.fromBundle( getArguments()).getPosition(), false);
+            mPagerAdapter.notifyDataSetChanged();
+            mBinding.pager.setCurrentItem( ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition(), false);
         });
 
 
@@ -109,12 +107,12 @@ public class ArticleDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Transition transition = TransitionInflater.from( requireContext())
-                .inflateTransition( R.transition.image_shared_element_transition);
-
-        setSharedElementEnterTransition( transition);
+        setSharedElementEnterTransition( TransitionInflater.from( requireContext())
+                .inflateTransition( R.transition.image_shared_element_transition));
 
         int pos = ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition();
+
+
 
         setEnterSharedElementCallback(
                 new SharedElementCallback() {

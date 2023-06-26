@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -85,15 +86,12 @@ public class ScreenSlidePageFragment extends Fragment {
         mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
         mBinding.materialToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-
-
-
         mBinding.photo.setTransitionName( String.valueOf( mId));
         mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
         mBinding.articleBodyRv.setLayoutManager( new LinearLayoutManager( mBinding.getRoot().getContext()));
 
         mBinding.materialToolbar.setNavigationOnClickListener(v -> {
-            Log.e(TAG, "----->  onBack!!!");
+            Log.e(TAG, "----->  onBack!!!    id:" + mId + "  pos:" + mPos);
 
             mBinding.photo.setTransitionName( String.valueOf( mId));
 
@@ -103,13 +101,19 @@ public class ScreenSlidePageFragment extends Fragment {
             action.setId(mId);
             action.setPosition( mPos);
 
-            NavController navController = NavHostFragment.findNavController( this);
+            assert this.getParentFragment() != null;
+            NavController navController = NavHostFragment.findNavController( this.getParentFragment());
 
             FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
                     .addSharedElement(mBinding.photo, mBinding.photo.getTransitionName())
                     .build();
 
-            navController.navigate( action, extras);
+            //navController.navigate( action, extras);
+
+
+            navController.getPreviousBackStackEntry().getSavedStateHandle().set("id", mId);
+            navController.getPreviousBackStackEntry().getSavedStateHandle().set("position", mPos);
+            navController.navigateUp();
         });
 
 
@@ -161,5 +165,9 @@ public class ScreenSlidePageFragment extends Fragment {
 
         postponeEnterTransition();
 
+        setExitTransition( TransitionInflater.from( requireContext()).inflateTransition( R.transition.pager_exit_transition));
+
     }
+
+
 }

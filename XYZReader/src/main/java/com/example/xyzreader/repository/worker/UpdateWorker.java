@@ -90,7 +90,6 @@ public class UpdateWorker extends Worker {
 
         String oldChecksum = mAppStateDao.loadValueByKey("checksum");
         String newChecksum = String.valueOf(getCRC32Checksum(string));
-        Log.d(TAG, string.length() + "     " + newChecksum);
 
 
         if (oldChecksum != null && oldChecksum.equals(newChecksum)) {
@@ -135,6 +134,7 @@ public class UpdateWorker extends Worker {
                     mItemDao.insert( new Article( id, title, author, thumb, aspectRatio, publishedDate, DEFAULT_COLOR));
                 }
 
+                mAppStateDao.insert( new AppState("checksum", newChecksum));
                 mItemDetailDao.insert( new ArticleDetail( id, body, photo));
             }
 

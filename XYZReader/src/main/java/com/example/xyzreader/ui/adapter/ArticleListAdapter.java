@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionSet;
 
@@ -19,14 +20,13 @@ import com.example.xyzreader.repository.model.Article;
 import com.example.xyzreader.ui.fragment.ArticleListFragment;
 import com.example.xyzreader.ui.fragment.ArticleListFragmentDirections;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
+import com.example.xyzreader.util.Util;
 import com.google.android.material.card.MaterialCardView;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+
 
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.ViewHolder> {
     private final Context mContext;
@@ -41,11 +41,14 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         this.setHasStableIds(true);
     }
 
-    private ArrayList<Article> mItemList = new ArrayList<>();
-    public void submit(List<Article> itemList) {
-        mItemList = new ArrayList<>( itemList);
-        // TODO optimize
-        notifyDataSetChanged();
+    final private ArrayList<Article> mItemList = new ArrayList<>();
+    public void update(List<Article> itemList) {
+
+        ListDiffCallback<Article> listDiffCallback = new ListDiffCallback<Article>( mItemList, itemList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff( listDiffCallback);
+        mItemList.clear();
+        mItemList.addAll( itemList);
+        diffResult.dispatchUpdatesTo( this);
     }
 
 
@@ -64,44 +67,14 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         holder.cardView.setCardBackgroundColor( item.getColor());
         holder.titleView.setText( item.getTitle());
-
-        holder.yearView.setText( String.format( Locale.getDefault(),"%d",
-                LocalDateTime.ofInstant( Instant.parse( item.getPublishedDate() + "Z"), ZoneId.systemDefault()) .getYear()));
-
+        holder.yearView.setText( Util.extractYear( item.getPublishedDate()));
         holder.authorView.setText( item.getAuthor());
-
         holder.idView.setText( String.valueOf( item.getId()));
         holder.posView.setText( String.valueOf( position));
-
-
         holder.thumbnailView.setImageUrl( item.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
-
-
-        holder.thumbnailView.addOnAttachStateChangeListener( new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View view) {
-                mArticleListFragment.startPostponedEnterTransition();
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View view) {
-
-            }
-        });
-
-
-
         holder.thumbnailView.setTransitionName( String.valueOf( item.getId()));
 
-
-
-
-
-
-
         holder.itemView.setOnClickListener(view1 -> {
-
-
 
                     ((TransitionSet) mArticleListFragment.getExitTransition())
                             .excludeTarget(view1, true);
@@ -110,7 +83,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
                             ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
 
                     action.setId( item.getId());
-            action.setPosition( position);
+                    action.setPosition( position);
 
                     FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
                             .addSharedElement( holder.thumbnailView, holder.thumbnailView.getTransitionName())

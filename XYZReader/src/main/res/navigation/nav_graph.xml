@@ -48,10 +48,11 @@
         <action
             android:id="@+id/action_articleDetailFragment_to_articleListFragment"
             app:destination="@id/articleListFragment"
-            /><!--
             app:popUpTo="@+id/articleListFragment"
             app:popUpToInclusive="true"
             app:popUpToSaveState="true"
+            /><!--
+
          -->
 
         <argument

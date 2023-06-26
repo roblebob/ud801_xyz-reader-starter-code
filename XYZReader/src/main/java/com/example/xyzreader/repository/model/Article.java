@@ -89,4 +89,39 @@ public class Article {
     public void setColor(int color) {
         this.color = color;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Article)) return false;
+
+        Article article = (Article) o;
+
+        if (getId() != article.getId()) return false;
+        if (Double.compare(article.getAspectRatio(), getAspectRatio()) != 0) return false;
+        if (getColor() != article.getColor()) return false;
+        if (getTitle() != null ? !getTitle().equals(article.getTitle()) : article.getTitle() != null)
+            return false;
+        if (getAuthor() != null ? !getAuthor().equals(article.getAuthor()) : article.getAuthor() != null)
+            return false;
+        if (getThumb() != null ? !getThumb().equals(article.getThumb()) : article.getThumb() != null)
+            return false;
+        return getPublishedDate() != null ? getPublishedDate().equals(article.getPublishedDate()) : article.getPublishedDate() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = getId();
+        result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
+        result = 31 * result + (getAuthor() != null ? getAuthor().hashCode() : 0);
+        result = 31 * result + (getThumb() != null ? getThumb().hashCode() : 0);
+        temp = Double.doubleToLongBits(getAspectRatio());
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (getPublishedDate() != null ? getPublishedDate().hashCode() : 0);
+        result = 31 * result + getColor();
+        return result;
+    }
 }
