@@ -66,6 +66,8 @@ public class ArticleListFragment extends Fragment {
                              Bundle savedInstanceState) {
         Log.d(TAG, "------> onCreateView()");
 
+        if (mBinding != null) return mBinding.getRoot();
+
         mBinding = FragmentArticleListBinding.inflate( inflater, container, false);
         mArticleListAdapter = new ArticleListAdapter(  this);
         mBinding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
@@ -74,12 +76,6 @@ public class ArticleListFragment extends Fragment {
         setExitTransition( TransitionInflater.from( requireContext())
                 .inflateTransition( R.transition.grid_exit_transition)
         );
-
-
-
-
-
-
 
         return mBinding.getRoot();
     }
@@ -94,11 +90,39 @@ public class ArticleListFragment extends Fragment {
 
         Log.d(TAG, "------> onViewCreated()");
 
-        postponeEnterTransition();
+
 
         NavController navController = NavHostFragment.findNavController(this);
         SavedStateHandle savedStateHandle = navController.getCurrentBackStackEntry().getSavedStateHandle();
         MutableLiveData<Integer> positionLive = savedStateHandle.getLiveData("position");
+        positionLive.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+                    @Override
+                    public void onChanged(Integer position) {
+                        // Do something with the result.
+                        Log.e(TAG, "------> onChanged():  pos:" + position);
+                        postponeEnterTransition();
+                        mBinding.recyclerView.scrollToPosition(position);
+
+                        setEnterSharedElementCallback(new SharedElementCallback() {
+                            @Override
+                            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+
+                                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
+                                        .findViewHolderForAdapterPosition(position);
+
+                                if (viewHolder == null) {
+                                    Log.e(TAG, "onMapSharedElements: " + "viewHolder == null");
+                                    return;
+                                }
+
+                                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.thumbnail));
+
+                                Log.e(TAG, "onMapSharedElements: " + names.get(0) + "  " + viewHolder.itemView.findViewById(R.id.thumbnail));
+                            }
+                        });
+                    }
+                }
+        );
 
         mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mBinding.swipeRefreshLayout.setRefreshing( value != null));
 
@@ -126,34 +150,7 @@ public class ArticleListFragment extends Fragment {
                     }
                 });
 
-        positionLive.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-                    @Override
-                    public void onChanged(Integer position) {
-                        // Do something with the result.
-                        Log.e(TAG, "------> onChanged():  pos:" + position);
-                        mBinding.recyclerView.scrollToPosition(position);
 
-
-                        setEnterSharedElementCallback(new SharedElementCallback() {
-                            @Override
-                            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-
-                                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
-                                        .findViewHolderForAdapterPosition(position);
-
-                                if (viewHolder == null) {
-                                    Log.e(TAG, "onMapSharedElements: " + "viewHolder == null");
-                                    return;
-                                }
-
-                                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.thumbnail));
-
-                                Log.e(TAG, "onMapSharedElements: " + names.get(0) + "  " + viewHolder.itemView.findViewById(R.id.thumbnail));
-                            }
-                        });
-                    }
-                }
-        );
     }
 
 

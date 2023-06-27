@@ -72,7 +72,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         holder.idView.setText( String.valueOf( item.getId()));
         holder.posView.setText( String.valueOf( position));
         holder.thumbnailView.setImageUrl( item.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
-        holder.thumbnailView.setTransitionName( String.valueOf( item.getId()));
+
+        holder.thumbnailView.setTransitionName( String.valueOf( position));
 
         holder.itemView.setOnClickListener(view1 -> {
 
@@ -82,7 +83,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
                     com.example.xyzreader.ui.fragment.ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
                             ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
 
-                    action.setId( item.getId());
+                    //action.setId( item.getId());
                     action.setPosition( position);
 
                     FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()

@@ -93,13 +93,13 @@ public class ScreenSlidePageFragment extends Fragment {
         mBinding.materialToolbar.setNavigationOnClickListener(v -> {
             Log.e(TAG, "----->  onBack!!!    id:" + mId + "  pos:" + mPos);
 
-            mBinding.photo.setTransitionName( String.valueOf( mId));
+            mBinding.photo.setTransitionName( String.valueOf( mPos));
 
-            ArticleDetailFragmentDirections.ActionArticleDetailFragmentToArticleListFragment action =
-                    ArticleDetailFragmentDirections.actionArticleDetailFragmentToArticleListFragment();
-
-            action.setId(mId);
-            action.setPosition( mPos);
+//            ArticleDetailFragmentDirections.ActionArticleDetailFragmentToArticleListFragment action =
+//                    ArticleDetailFragmentDirections.actionArticleDetailFragmentToArticleListFragment();
+//
+//            action.setId(mId);
+//            action.setPosition( mPos);
 
             assert this.getParentFragment() != null;
             NavController navController = NavHostFragment.findNavController( this.getParentFragment());
@@ -111,7 +111,7 @@ public class ScreenSlidePageFragment extends Fragment {
             //navController.navigate( action, extras);
 
 
-            navController.getPreviousBackStackEntry().getSavedStateHandle().set("id", mId);
+            //navController.getPreviousBackStackEntry().getSavedStateHandle().set("id", mId);
             navController.getPreviousBackStackEntry().getSavedStateHandle().set("position", mPos);
             navController.navigateUp();
         });
