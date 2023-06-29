@@ -11,11 +11,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.transition.TransitionInflater;
+import androidx.transition.TransitionSet;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import com.example.xyzreader.MainActivity;
 import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentArticleListBinding;
 import com.example.xyzreader.repository.model.Article;
@@ -36,14 +39,15 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ArticleListFragment extends Fragment {
+public class ArticleListFragment extends Fragment implements ArticleListAdapter.ViewHolderListener {
     public static final String TAG = ArticleListFragment.class.getSimpleName();
     public ArticleListFragment() { /* Required empty public constructor */ }
     FragmentArticleListBinding mBinding;
     private AppViewModel mViewModel;
     ArticleListAdapter mArticleListAdapter;
 
-
+    //int mPosition = RecyclerView.NO_POSITION;
+    //MutableLiveData<Integer> positionLive;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +61,9 @@ public class ArticleListFragment extends Fragment {
             mViewModel.refresh();
             Log.d(TAG, "------> refresh()");
         }
+//        NavController navController = NavHostFragment.findNavController(this);
+//        SavedStateHandle savedStateHandle = navController.getCurrentBackStackEntry().getSavedStateHandle();
+//        positionLive = savedStateHandle.getLiveData("position");
     }
 
 
@@ -66,16 +73,46 @@ public class ArticleListFragment extends Fragment {
                              Bundle savedInstanceState) {
         Log.d(TAG, "------> onCreateView()");
 
-        if (mBinding != null) return mBinding.getRoot();
+        //mPosition = RecyclerView.NO_POSITION;
+        //Log.e(TAG, "mPosition: " + mPosition + "  RecyclerView.NO_POSITION: " + RecyclerView.NO_POSITION);
+
+        //if (mBinding != null) return mBinding.getRoot();
 
         mBinding = FragmentArticleListBinding.inflate( inflater, container, false);
         mArticleListAdapter = new ArticleListAdapter(  this);
         mBinding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
         mBinding.recyclerView .setAdapter( mArticleListAdapter);
 
+        mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mBinding.swipeRefreshLayout.setRefreshing( value != null));
+
+
         setExitTransition( TransitionInflater.from( requireContext())
                 .inflateTransition( R.transition.grid_exit_transition)
         );
+
+
+
+        setExitSharedElementCallback(
+                new SharedElementCallback() {
+                    @Override
+                    public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                        // Locate the ViewHolder for the clicked position.
+                        RecyclerView.ViewHolder selectedViewHolder = mBinding.recyclerView
+                                .findViewHolderForAdapterPosition(MainActivity.mCurrentPosition);
+                        if (selectedViewHolder == null) {
+                            return;
+                        }
+
+                        // Map the first shared element name to the child ImageView.
+                        sharedElements.put(names.get(0), selectedViewHolder.itemView.findViewById(R.id.thumbnail));
+
+
+                        Log.e(TAG + " onMapSharedElements: ", names.get(0) + "  " + selectedViewHolder.itemView.findViewById(R.id.thumbnail));
+                    }
+                });
+
+
+        postponeEnterTransition();
 
         return mBinding.getRoot();
     }
@@ -92,39 +129,35 @@ public class ArticleListFragment extends Fragment {
 
 
 
-        NavController navController = NavHostFragment.findNavController(this);
-        SavedStateHandle savedStateHandle = navController.getCurrentBackStackEntry().getSavedStateHandle();
-        MutableLiveData<Integer> positionLive = savedStateHandle.getLiveData("position");
-        positionLive.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-                    @Override
-                    public void onChanged(Integer position) {
-                        // Do something with the result.
-                        Log.e(TAG, "------> onChanged():  pos:" + position);
-                        postponeEnterTransition();
-                        mBinding.recyclerView.scrollToPosition(position);
+//        positionLive.observe(getViewLifecycleOwner(), position -> {
+//                    // Do something with the result.
+//                    Log.e(TAG, "------> onChanged():  pos:" + position + "    " + mBinding.recyclerView.getAdapter().getItemCount());
+//
+//                    mPosition = position;
+//
+//                    if (position < mBinding.recyclerView.getAdapter().getItemCount()) {
+//                        mBinding.recyclerView.scrollToPosition(position);
+//
+//                        setEnterSharedElementCallback(new SharedElementCallback() {
+//                            @Override
+//                            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+//
+//                                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
+//                                        .findViewHolderForAdapterPosition(position);
+//
+//                                if (viewHolder == null) {
+//                                    Log.e(TAG, "onMapSharedElements: " + "viewHolder == null");
+//                                    return;
+//                                }
+//
+//                                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.thumbnail));
+//
+//                                Log.e(TAG, "onMapSharedElements: " + names.get(0) + "  " + viewHolder.itemView.findViewById(R.id.thumbnail));
+//                            }
+//                        });
+//                    }
+//        });
 
-                        setEnterSharedElementCallback(new SharedElementCallback() {
-                            @Override
-                            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-
-                                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
-                                        .findViewHolderForAdapterPosition(position);
-
-                                if (viewHolder == null) {
-                                    Log.e(TAG, "onMapSharedElements: " + "viewHolder == null");
-                                    return;
-                                }
-
-                                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.thumbnail));
-
-                                Log.e(TAG, "onMapSharedElements: " + names.get(0) + "  " + viewHolder.itemView.findViewById(R.id.thumbnail));
-                            }
-                        });
-                    }
-                }
-        );
-
-        mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mBinding.swipeRefreshLayout.setRefreshing( value != null));
 
         final ViewGroup parentView = (ViewGroup) view.getParent();
         mViewModel.getArticleListLive().observe(getViewLifecycleOwner(),
@@ -141,8 +174,11 @@ public class ArticleListFragment extends Fragment {
                                             public boolean onPreDraw() {
 
                                                 parentView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                                                mBinding.recyclerView.scrollToPosition(MainActivity.mCurrentPosition);
+                                                Log.d(TAG, "------> rv ready by viewTreeObserver");
+
                                                 startPostponedEnterTransition();
-                                                Log.d(TAG, "------> startPostponedEnterTransition()");
                                                 return true;
                                             }
                                         }
@@ -194,12 +230,32 @@ public class ArticleListFragment extends Fragment {
     }
 
 
+    @Override
+    public void onViewHolderClicked(View view, int position) {
+
+        ((TransitionSet) getExitTransition()).excludeTarget(view, true);
+
+        ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
+                ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
+
+        action.setPosition( position);
+        MainActivity.mCurrentPosition = position;
+
+        View thumbnailView = view.findViewById( R.id.thumbnail);
+
+        FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
+                .addSharedElement( thumbnailView, thumbnailView.getTransitionName())
+                .build();
+
+        NavController navController =  NavHostFragment.findNavController( this);
+
+
+        navController.navigate( action, extras);
+
+
+        Log.d(TAG, "------> onViewHolderClicked()  position:" + position + "  " + thumbnailView.getTransitionName());
+    }
 }
-
-
-
-
-
 
 
 

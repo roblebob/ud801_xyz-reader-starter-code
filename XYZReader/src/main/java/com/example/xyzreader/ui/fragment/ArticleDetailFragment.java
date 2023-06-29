@@ -9,19 +9,24 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.xyzreader.MainActivity;
 import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentArticleDetailBinding;
+import com.example.xyzreader.repository.model.Article;
 import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
+import com.example.xyzreader.ui.adapter.ListDiffCallback;
 import com.example.xyzreader.ui.adapter.ScreenSlidePagerAdapter;
 
 import java.util.ArrayList;
@@ -64,40 +69,30 @@ public class ArticleDetailFragment extends Fragment {
 
         mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
         mBinding.pager.setAdapter( mPagerAdapter);
-
+        mBinding.pager.registerOnPageChangeCallback( new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+            @Override
+            public void onPageSelected(int position) {
+                MainActivity.mCurrentPosition = position;
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) { }
+        });
 
         mViewModel.getArticleIdListLive().observe(getViewLifecycleOwner(), list -> {
-            mArticleIdList = new ArrayList<>(list);
-            mPagerAdapter.notifyDataSetChanged();
-            mBinding.pager.setCurrentItem( ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition(), false);
+
+            ListDiffCallback<Integer> listDiffCallback = new ListDiffCallback<>( mArticleIdList, list);
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff( listDiffCallback);
+            mArticleIdList.clear();
+            mArticleIdList.addAll( list);
+            diffResult.dispatchUpdatesTo( mPagerAdapter);
+
+            mBinding.pager.setCurrentItem(
+                    MainActivity.mCurrentPosition, //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition()
+                    false
+            );
         });
-
-
-
-/*
-        // moves the back arrow under the system bar
-        mBinding.actionUp.setOnApplyWindowInsetsListener( (view, insets) -> {
-            int statusBarSize = insets.getSystemWindowInsetTop();
-            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            p.setMargins(0, statusBarSize, 0, 0);
-            view.requestLayout();
-            return insets;
-        });
-
-        mBinding.actionUp.setOnClickListener( (view) -> {
-            ArticleDetailFragmentDirections.ActionArticleDetailFragmentToArticleListFragment action =
-                    ArticleDetailFragmentDirections.actionArticleDetailFragmentToArticleListFragment();
-
-            int pos = mBinding.pager.getCurrentItem();
-            action.setId(mArticleIdList.get(pos));
-            action.setPosition( pos);
-
-            NavController navController = NavHostFragment.findNavController( this);
-            navController.navigate( action);
-        });
-*/
-
-
 
         return mBinding.getRoot();
     }
@@ -110,23 +105,14 @@ public class ArticleDetailFragment extends Fragment {
         setSharedElementEnterTransition( TransitionInflater.from( requireContext())
                 .inflateTransition( R.transition.image_shared_element_transition));
 
-        int pos = ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition();
-
-
-
         setEnterSharedElementCallback(
                 new SharedElementCallback() {
                     @Override
                     public void onMapSharedElements( List<String> names, Map<String, View> sharedElements) {
-                        // Locate the image view at the primary fragment (the ImageFragment
-                        // that is currently visible). To locate the fragment, call
-                        // instantiateItem with the selection position.
-                        // At this stage, the method will simply return the fragment at the
-                        // position and will not create a new one.
 
-
-
-                        Fragment currentFragment = getChildFragmentManager().findFragmentByTag("f" + pos);
+                        Fragment currentFragment = getChildFragmentManager().findFragmentByTag("f" +
+                                MainActivity.mCurrentPosition    //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition()
+                        );
                         if (currentFragment == null) {
                             Log.e(TAG, "onMapSharedElements: currentFragment is null");
                             return;
@@ -137,20 +123,16 @@ public class ArticleDetailFragment extends Fragment {
                             return;
                         }
 
-                        Log.e(TAG, names.get(0) + " " + view.findViewById(R.id.photo));
+                        Log.e(TAG, names.get(0) + " of " + names.size() + "  " + view.findViewById(R.id.photo));
 
                         // Map the first shared element name to the child ImageView.
                         sharedElements.put(names.get(0), view.findViewById(R.id.photo));
                     }
                 });
 
-        postponeEnterTransition();
-
-        //mBinding.pager.postDelayed( () -> { mBinding.pager.setCurrentItem(pos, false); }, 100);
-
-
-
-
+        if (savedInstanceState == null) {
+            postponeEnterTransition();
+        }
     }
 
     @Override

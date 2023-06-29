@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +34,9 @@ import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ArticleBodyAdapter;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,6 +83,10 @@ public class ScreenSlidePageFragment extends Fragment {
         mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
 
         mArticleBodyAdapter = new ArticleBodyAdapter();
+
+
+        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) { @Override public void handleOnBackPressed() { navigateUp(); } };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
 
     @Override
@@ -90,31 +98,7 @@ public class ScreenSlidePageFragment extends Fragment {
         mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
         mBinding.articleBodyRv.setLayoutManager( new LinearLayoutManager( mBinding.getRoot().getContext()));
 
-        mBinding.materialToolbar.setNavigationOnClickListener(v -> {
-            Log.e(TAG, "----->  onBack!!!    id:" + mId + "  pos:" + mPos);
-
-            mBinding.photo.setTransitionName( String.valueOf( mPos));
-
-//            ArticleDetailFragmentDirections.ActionArticleDetailFragmentToArticleListFragment action =
-//                    ArticleDetailFragmentDirections.actionArticleDetailFragmentToArticleListFragment();
-//
-//            action.setId(mId);
-//            action.setPosition( mPos);
-
-            assert this.getParentFragment() != null;
-            NavController navController = NavHostFragment.findNavController( this.getParentFragment());
-
-            FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
-                    .addSharedElement(mBinding.photo, mBinding.photo.getTransitionName())
-                    .build();
-
-            //navController.navigate( action, extras);
-
-
-            //navController.getPreviousBackStackEntry().getSavedStateHandle().set("id", mId);
-            navController.getPreviousBackStackEntry().getSavedStateHandle().set("position", mPos);
-            navController.navigateUp();
-        });
+        mBinding.materialToolbar.setNavigationOnClickListener(v -> { navigateUp(); });
 
 
 
@@ -169,5 +153,24 @@ public class ScreenSlidePageFragment extends Fragment {
 
     }
 
+
+    private void navigateUp() {
+        Log.e(TAG, "----->  onBack!!!      pos:" + mPos);
+        mBinding.photo.setTransitionName(String.valueOf(mPos));
+
+        setExitSharedElementCallback( new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                Log.e(TAG, "onMapSharedElement    " + names.get(0) + " " + mBinding.photo);
+                sharedElements.put(names.get(0), mBinding.photo);
+            }
+        });
+
+
+        assert this.getParentFragment() != null;
+        NavController navController = NavHostFragment.findNavController( this.getParentFragment());
+        navController.getPreviousBackStackEntry().getSavedStateHandle().set("position", mPos);
+        navController.navigateUp();
+    }
 
 }
