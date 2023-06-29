@@ -54,18 +54,14 @@ public class ArticleDetailFragment extends Fragment {
 
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
         AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
         mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
 
         mPagerAdapter = new ScreenSlidePagerAdapter( this);
-    }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
 
         mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
         mBinding.pager.setAdapter( mPagerAdapter);
@@ -94,13 +90,7 @@ public class ArticleDetailFragment extends Fragment {
             );
         });
 
-        return mBinding.getRoot();
-    }
 
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         setSharedElementEnterTransition( TransitionInflater.from( requireContext())
                 .inflateTransition( R.transition.image_shared_element_transition));
@@ -133,7 +123,11 @@ public class ArticleDetailFragment extends Fragment {
         if (savedInstanceState == null) {
             postponeEnterTransition();
         }
+
+        return mBinding.getRoot();
     }
+
+
 
     @Override
     public void onDestroyView() {

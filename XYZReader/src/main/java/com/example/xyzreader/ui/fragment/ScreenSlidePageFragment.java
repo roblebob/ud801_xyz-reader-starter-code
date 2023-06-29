@@ -85,8 +85,8 @@ public class ScreenSlidePageFragment extends Fragment {
         mArticleBodyAdapter = new ArticleBodyAdapter();
 
 
-        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) { @Override public void handleOnBackPressed() { navigateUp(); } };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
+//        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) { @Override public void handleOnBackPressed() { navigateUp(); } };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
 
     @Override
@@ -94,14 +94,11 @@ public class ScreenSlidePageFragment extends Fragment {
         mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
         mBinding.materialToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-        mBinding.photo.setTransitionName( String.valueOf( mId));
         mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
         mBinding.articleBodyRv.setLayoutManager( new LinearLayoutManager( mBinding.getRoot().getContext()));
 
         mBinding.materialToolbar.setNavigationOnClickListener(v -> { navigateUp(); });
-
-
-
+        mBinding.photo.setTransitionName(String.valueOf(mPos));
 
 
         mViewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
@@ -142,29 +139,23 @@ public class ScreenSlidePageFragment extends Fragment {
         return mBinding.getRoot();
     }
 
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        postponeEnterTransition();
-
-        setExitTransition( TransitionInflater.from( requireContext()).inflateTransition( R.transition.pager_exit_transition));
-
-    }
+//
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//
+//        postponeEnterTransition();
+//
+//        setExitTransition( TransitionInflater.from( requireContext()).inflateTransition( R.transition.pager_exit_transition));
+//
+//    }
 
 
     private void navigateUp() {
         Log.e(TAG, "----->  onBack!!!      pos:" + mPos);
-        mBinding.photo.setTransitionName(String.valueOf(mPos));
 
-        setExitSharedElementCallback( new SharedElementCallback() {
-            @Override
-            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                Log.e(TAG, "onMapSharedElement    " + names.get(0) + " " + mBinding.photo);
-                sharedElements.put(names.get(0), mBinding.photo);
-            }
-        });
+
+
 
 
         assert this.getParentFragment() != null;

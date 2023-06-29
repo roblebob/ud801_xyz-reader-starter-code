@@ -43,13 +43,12 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     public ArticleListAdapter(ArticleListFragment articleListFragment) {
         mViewHolderListener = articleListFragment;
         mContext = articleListFragment.requireContext();
-        this.setHasStableIds(true);
     }
 
-    final private ArrayList<Article> mItemList = new ArrayList<>();
+    private ArrayList<Article> mItemList = new ArrayList<>();
     public void update(List<Article> itemList) {
 
-        ListDiffCallback<Article> listDiffCallback = new ListDiffCallback<Article>( mItemList, itemList);
+        ListDiffCallback<Article> listDiffCallback = new ListDiffCallback<>( mItemList, itemList);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff( listDiffCallback);
         mItemList.clear();
         mItemList.addAll( itemList);
@@ -61,7 +60,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_article, parent, false);
-        return new ViewHolder(view, mViewHolderListener);
+        return new ViewHolder(view, mViewHolderListener, mContext);
     }
 
 
@@ -69,44 +68,9 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         Article item = mItemList.get( position);
+        holder.bind( item);
 
-        holder.cardView.setCardBackgroundColor( item.getColor());
-        holder.titleView.setText( item.getTitle());
-        holder.yearView.setText( Util.extractYear( item.getPublishedDate()));
-        holder.authorView.setText( item.getAuthor());
-        holder.idView.setText( String.valueOf( item.getId()));
-        holder.posView.setText( String.valueOf( position));
-        holder.thumbnailView.setTransitionName( String.valueOf( position));
-        holder.thumbnailView.setImageUrl( item.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
-
-
-//        ImageLoaderHelper
-//                .getInstance(mContext.getApplicationContext())
-//                .getImageLoader()
-//                .get(item.getThumb(), new ImageLoader.ImageListener() {
-//                    @Override
-//                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-//                        Bitmap bitmap = imageContainer.getBitmap();
-//                        if (bitmap != null) {
-//                            holder.thumbnailView.setImageBitmap( imageContainer.getBitmap());
-//                            //mArticleListFragment.startPostponedEnterTransition();
-//                            //Log.e(TAG, "thumb " + position +"   (onResponse)");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError volleyError) {
-//                        //mArticleListFragment.startPostponedEnterTransition();
-//                        //Log.e(TAG, "thumb " + position +"   (onErrorResponse)");
-//                    }
-//                });
-
-
-
-
-
-
-
+        //holder.thumbnailView.setImageUrl( item.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
     }
 
     @Override
@@ -127,7 +91,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public MaterialCardView cardView;
-        public NetworkImageView thumbnailView;
+        public ImageView thumbnailView;
         public TextView titleView;
         public TextView authorView;
         public TextView yearView;
@@ -136,7 +100,9 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         private final ViewHolderListener viewHolderListener;
 
-        public ViewHolder(View view, ViewHolderListener viewHolderListener) {
+        private final Context context;
+
+        public ViewHolder(View view, ViewHolderListener viewHolderListener, Context context) {
             super(view);
             cardView = view.findViewById(R.id.list_item_article_cardview);
             thumbnailView = view.findViewById(R.id.thumbnail);
@@ -147,6 +113,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             posView = view.findViewById(R.id.list_item_article__pos);
             this.viewHolderListener = viewHolderListener;
             view.setOnClickListener(this);
+            this.context = context;
         }
 
         @Override
@@ -154,5 +121,36 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             Log.d(TAG, "Element " + getBindingAdapterPosition() + " clicked.");
             viewHolderListener.onViewHolderClicked(v, getBindingAdapterPosition());
         }
+
+        public void bind(Article article) {
+            cardView.setCardBackgroundColor( article.getColor());
+            titleView.setText( article.getTitle());
+            yearView.setText( Util.extractYear( article.getPublishedDate()));
+            authorView.setText( article.getAuthor());
+            idView.setText( String.valueOf( article.getId()));
+            posView.setText( String.valueOf( getBindingAdapterPosition()));
+            thumbnailView.setTransitionName( String.valueOf( getBindingAdapterPosition()));
+
+            ImageLoaderHelper
+                    .getInstance(context.getApplicationContext())
+                    .getImageLoader()
+                    .get(article.getThumb(), new ImageLoader.ImageListener() {
+                        @Override
+                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                            Bitmap bitmap = imageContainer.getBitmap();
+                            if (bitmap != null) {
+                                thumbnailView.setImageBitmap( imageContainer.getBitmap());
+                                Log.e(TAG, "thumb " + getBindingAdapterPosition() +"   (onResponse)");
+                            }
+                        }
+
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.e(TAG, "thumb " + getBindingAdapterPosition() +"   (onErrorResponse)");
+                        }
+                    });
+        }
     }
 }
+
+
