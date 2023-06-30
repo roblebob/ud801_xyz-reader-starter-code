@@ -22,8 +22,8 @@ public class AppViewModel extends ViewModel {
 
     private final WorkManager mWorkManager;
     AppStateDao mAppStateDao;
-    ArticleDao mItemDao;
-    ArticleDetailDao mItemDetailDao;
+    ArticleDao mArticleDao;
+    ArticleDetailDao mArticleDetailDao;
 
 
     public AppViewModel(Application application) {
@@ -31,21 +31,19 @@ public class AppViewModel extends ViewModel {
         this.mWorkManager = WorkManager.getInstance( application);
         AppDatabase appDatabase = AppDatabase.getInstance( application.getApplicationContext());
         this.mAppStateDao = appDatabase.appStateDao();
-        this.mItemDao = appDatabase.itemDao();
-        this.mItemDetailDao = appDatabase.itemDetailDao();
+        this.mArticleDao = appDatabase.itemDao();
+        this.mArticleDetailDao = appDatabase.itemDetailDao();
     }
 
     public LiveData<String> getAppStateByKeyLive(String key) { return mAppStateDao.loadValueByKeyLive( key); }
-
-    public LiveData<List<Article>> getArticleListLive() { return mItemDao.loadArticleListLive(); }
-
-    public LiveData<List<Integer>> getArticleIdListLive() { return mItemDao.loadArticleIdListLive(); }
-
-    public LiveData<Article> getArticleByIdLive(int id) { return mItemDao.loadArticleByIdLive( id); }
-    public LiveData<ArticleDetail> getArticleDetailByIdLive(int id) { return mItemDetailDao.loadItemDetailByIdLive( id); }
-
+    public LiveData<List<Article>> getArticleListLive() { return mArticleDao.loadArticleListLive(); }
+    public LiveData<List<Integer>> getArticleIdListLive() { return mArticleDao.loadArticleIdListLive(); }
+    public LiveData<Article> getArticleByIdLive(int id) { return mArticleDao.loadArticleByIdLive( id); }
+    public LiveData<ArticleDetail> getArticleDetailByIdLive(int id) { return mArticleDetailDao.loadItemDetailByIdLive( id); }
 
     public void refresh() {
         mWorkManager.enqueue(OneTimeWorkRequest.from(UpdateWorker.class));
     }
+
+
 }

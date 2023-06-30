@@ -104,6 +104,7 @@ public class ScreenSlidePageFragment extends Fragment {
         mViewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
             mBinding.materialToolbar.setTitle( article.getTitle());
             mBinding.shareFab.setBackgroundTintList( ColorStateList.valueOf( article.getColor()));
+            mArticleBodyAdapter.setColor( article.getColor());
         });
         mViewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
             mArticleBodyAdapter.submit( detail.getBody());
