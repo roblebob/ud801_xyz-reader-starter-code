@@ -6,14 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.transition.TransitionInflater;
@@ -54,16 +51,14 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         super.onCreate(savedInstanceState);
         Log.d(TAG, "------> onCreate()");
 
-        AppViewModelFactory appViewModelFactory = new AppViewModelFactory( requireActivity().getApplication());
-        mViewModel = new ViewModelProvider(this,  appViewModelFactory).get(AppViewModel.class);
+        mViewModel = new ViewModelProvider(this,
+                new AppViewModelFactory( requireActivity().getApplication())
+        ).get(AppViewModel.class);
 
         if (savedInstanceState == null) {
-            mViewModel.refresh();
-            Log.d(TAG, "------> refresh()");
+            mViewModel.upgrade();
+            Log.d(TAG, "------> upgrading");
         }
-//        NavController navController = NavHostFragment.findNavController(this);
-//        SavedStateHandle savedStateHandle = navController.getCurrentBackStackEntry().getSavedStateHandle();
-//        positionLive = savedStateHandle.getLiveData("position");
     }
 
 
@@ -73,17 +68,14 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                              Bundle savedInstanceState) {
         Log.d(TAG, "------> onCreateView()");
 
-        //mPosition = RecyclerView.NO_POSITION;
-        //Log.e(TAG, "mPosition: " + mPosition + "  RecyclerView.NO_POSITION: " + RecyclerView.NO_POSITION);
 
-        //if (mBinding != null) return mBinding.getRoot();
 
         mBinding = FragmentArticleListBinding.inflate( inflater, container, false);
         mArticleListAdapter = new ArticleListAdapter(  this);
         mBinding.recyclerView .setLayoutManager( new StaggeredGridLayoutManager( getResources().getInteger( R.integer.list_column_count), StaggeredGridLayoutManager.VERTICAL));
         mBinding.recyclerView .setAdapter( mArticleListAdapter);
 
-        mViewModel.getAppStateByKeyLive("refreshing").observe( getViewLifecycleOwner(), value -> mBinding.swipeRefreshLayout.setRefreshing( value != null));
+        mViewModel.getAppStateByKeyLive("upgrading").observe( getViewLifecycleOwner(), value -> mBinding.swipeRefreshLayout.setRefreshing( value != null));
 
 
         setExitTransition( TransitionInflater.from( requireContext())
@@ -98,7 +90,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                     public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                         // Locate the ViewHolder for the clicked position.
                         RecyclerView.ViewHolder selectedViewHolder = mBinding.recyclerView
-                                .findViewHolderForAdapterPosition(MainActivity.mCurrentPosition);
+                                .findViewHolderForAdapterPosition( MainActivity.mCurrentPosition);
                         if (selectedViewHolder == null) {
                             return;
                         }
@@ -127,38 +119,6 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
         Log.d(TAG, "------> onViewCreated()");
 
-
-
-//        positionLive.observe(getViewLifecycleOwner(), position -> {
-//                    // Do something with the result.
-//                    Log.e(TAG, "------> onChanged():  pos:" + position + "    " + mBinding.recyclerView.getAdapter().getItemCount());
-//
-//                    mPosition = position;
-//
-//                    if (position < mBinding.recyclerView.getAdapter().getItemCount()) {
-//                        mBinding.recyclerView.scrollToPosition(position);
-//
-//                        setEnterSharedElementCallback(new SharedElementCallback() {
-//                            @Override
-//                            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-//
-//                                RecyclerView.ViewHolder viewHolder = mBinding.recyclerView
-//                                        .findViewHolderForAdapterPosition(position);
-//
-//                                if (viewHolder == null) {
-//                                    Log.e(TAG, "onMapSharedElements: " + "viewHolder == null");
-//                                    return;
-//                                }
-//
-//                                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.thumbnail));
-//
-//                                Log.e(TAG, "onMapSharedElements: " + names.get(0) + "  " + viewHolder.itemView.findViewById(R.id.thumbnail));
-//                            }
-//                        });
-//                    }
-//        });
-
-
         final ViewGroup parentView = (ViewGroup) view.getParent();
         mViewModel.getArticleListLive().observe(getViewLifecycleOwner(),
                 new Observer<List<Article>>() {
@@ -185,8 +145,6 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                                 );
                     }
                 });
-
-
     }
 
 
@@ -240,6 +198,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
         action.setPosition( position);
         MainActivity.mCurrentPosition = position;
+        mViewModel.updatePosition( position);
 
         View thumbnailView = view.findViewById( R.id.thumbnail);
 

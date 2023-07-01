@@ -16,6 +16,7 @@ import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 
@@ -38,6 +39,8 @@ import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 import java.util.List;
 import java.util.Map;
 
+
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ScreenSlidePageFragment#newInstance} factory method to
@@ -52,6 +55,9 @@ public class ScreenSlidePageFragment extends Fragment {
     public ScreenSlidePageFragment() { /* Required empty public constructor */ }
     private ArticleBodyAdapter mArticleBodyAdapter;
     private AppViewModel mViewModel;
+
+
+    private LinearLayoutManager mLinearLayoutManager;
     private FragmentScreenSlidePageBinding mBinding;
 
     /**
@@ -79,14 +85,11 @@ public class ScreenSlidePageFragment extends Fragment {
             mPos = getArguments().getInt(POS);
         }
 
-        AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
-        mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
+        mViewModel = new ViewModelProvider(this,
+                new AppViewModelFactory(requireActivity().getApplication())
+        ).get(AppViewModel.class);
 
         mArticleBodyAdapter = new ArticleBodyAdapter();
-
-
-//        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) { @Override public void handleOnBackPressed() { navigateUp(); } };
-//        requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
 
     @Override
@@ -95,11 +98,10 @@ public class ScreenSlidePageFragment extends Fragment {
 
         mBinding.materialToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
-        mBinding.articleBodyRv.setLayoutManager( new LinearLayoutManager( mBinding.getRoot().getContext()));
-
+        mLinearLayoutManager = new LinearLayoutManager( requireContext(), RecyclerView.VERTICAL, false);
+        mBinding.articleBodyRv.setLayoutManager( mLinearLayoutManager);
         mBinding.materialToolbar.setNavigationOnClickListener(v -> { navigateUp(); });
         mBinding.photo.setTransitionName(String.valueOf(mPos));
-
 
         mViewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
             mBinding.materialToolbar.setTitle( article.getTitle());
@@ -108,6 +110,10 @@ public class ScreenSlidePageFragment extends Fragment {
         });
         mViewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
             mArticleBodyAdapter.submit( detail.getBody());
+            if (detail.getBposition() > 0) {
+                //mBinding.appBarLayout.setExpanded(false);
+                mBinding.articleBodyRv.post(() -> mBinding.articleBodyRv.scrollToPosition( detail.getBposition()));
+            }
 
             ImageLoaderHelper
                     .getInstance(getActivity())
@@ -133,35 +139,32 @@ public class ScreenSlidePageFragment extends Fragment {
                     });
         });
 
-
-
-
+        mBinding.articleBodyRv.addOnScrollListener( new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    Log.e(TAG, "----->  onScrollStateChanged!!!      bpos:" + mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
+                }
+            }
+        });
 
         return mBinding.getRoot();
     }
 
-//
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//
-//        postponeEnterTransition();
-//
-//        setExitTransition( TransitionInflater.from( requireContext()).inflateTransition( R.transition.pager_exit_transition));
-//
-//    }
 
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mViewModel.updateBposition( mId, mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
+        Log.e(TAG, "----->  onPause!!!      bpos:" + mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
+    }
 
     private void navigateUp() {
         Log.e(TAG, "----->  onBack!!!      pos:" + mPos);
-
-
-
-
-
         assert this.getParentFragment() != null;
         NavController navController = NavHostFragment.findNavController( this.getParentFragment());
-        navController.getPreviousBackStackEntry().getSavedStateHandle().set("position", mPos);
         navController.navigateUp();
     }
 

@@ -10,17 +10,16 @@ import java.util.ArrayList;
 @Entity(tableName = "ArticleDetail")
 public class ArticleDetail {
 
-    @PrimaryKey(autoGenerate = false)   private int                 id;
-    @ColumnInfo(name = "body")          private ArrayList<String>   body;
+    @PrimaryKey(autoGenerate = false)   private int id;
+    @ColumnInfo(name = "body")          private ArrayList<String> body;
     @ColumnInfo(name = "photo")         private String photo;
+    @ColumnInfo(name = "bposition")     private int bposition;
 
-    @ColumnInfo(name = "bpos")         private int                 bpos;
-
-    public ArticleDetail(int id, ArrayList<String> body, String photo) {
+    public ArticleDetail(int id, ArrayList<String> body, String photo, int bposition) {
         this.id = id;
         this.body = body;
         this.photo = photo;
-        this.bpos = 0;
+        this.bposition = bposition;
     }
 
 
@@ -29,7 +28,7 @@ public class ArticleDetail {
         this.id = articleDetail.id;
         this.body = articleDetail.body;
         this.photo = articleDetail.photo;
-        this.bpos = articleDetail.bpos;
+        this.bposition = articleDetail.bposition;
     }
 
     public int getId() {
@@ -53,11 +52,11 @@ public class ArticleDetail {
         this.photo = photo;
     }
 
-    public int getBpos() {
-        return bpos;
+    public int getBposition() {
+        return bposition;
     }
-    public void setBpos(int bpos) {
-        this.bpos = bpos;
+    public void setBposition(int bposition) {
+        this.bposition = bposition;
     }
 
 }

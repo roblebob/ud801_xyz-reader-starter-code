@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -57,11 +58,11 @@ public class ArticleDetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        AppViewModelFactory appViewModelFactory = new AppViewModelFactory(requireActivity().getApplication());
-        mViewModel = new ViewModelProvider(this, appViewModelFactory).get(AppViewModel.class);
+        mViewModel = new ViewModelProvider(this,
+                new AppViewModelFactory(requireActivity().getApplication() )
+        ).get( AppViewModel.class);
 
         mPagerAdapter = new ScreenSlidePagerAdapter( this);
-
 
         mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
         mBinding.pager.setAdapter( mPagerAdapter);
@@ -70,7 +71,7 @@ public class ArticleDetailFragment extends Fragment {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
             @Override
             public void onPageSelected(int position) {
-
+                mViewModel.updatePosition( position);
                 MainActivity.mCurrentPosition = position;
             }
             @Override
@@ -86,7 +87,7 @@ public class ArticleDetailFragment extends Fragment {
             diffResult.dispatchUpdatesTo( mPagerAdapter);
 
             mBinding.pager.setCurrentItem(
-                    MainActivity.mCurrentPosition, //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition()
+                    MainActivity.mCurrentPosition, //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition(),
                     false
             );
         });
@@ -102,7 +103,7 @@ public class ArticleDetailFragment extends Fragment {
                     public void onMapSharedElements( List<String> names, Map<String, View> sharedElements) {
 
                         Fragment currentFragment = getChildFragmentManager().findFragmentByTag("f" +
-                                MainActivity.mCurrentPosition    //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition()
+                                MainActivity.mCurrentPosition //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition()
                         );
                         if (currentFragment == null) {
                             Log.e(TAG, "onMapSharedElements: currentFragment is null");

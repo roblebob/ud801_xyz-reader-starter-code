@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui.adapter;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +45,10 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText( mBodyList.get( position));
+        holder.textView.setText(Html.fromHtml( mBodyList.get( position), Html.FROM_HTML_MODE_COMPACT));
         holder.positionTv.setText( String.valueOf( position));
         if (mColor != 0) {
-            holder.cardView.setCardBackgroundColor( mColor);
-            holder.cardView.setAlpha( 0.5f);
+            holder.positionTv.setTextColor( mColor);
         }
 
     }
@@ -61,13 +61,11 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
     static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
         public TextView positionTv;
-        public MaterialCardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById( R.id.list_item_body_tv);
             positionTv = itemView.findViewById( R.id.list_item_body_position_tv);
-            cardView = itemView.findViewById( R.id.list_item_body_cardview);
         }
     }
 }

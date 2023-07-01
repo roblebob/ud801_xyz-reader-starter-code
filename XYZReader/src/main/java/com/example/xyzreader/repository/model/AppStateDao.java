@@ -11,6 +11,11 @@ public interface AppStateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(AppState appState);
 
+
+    @Query(value = "UPDATE AppState SET `value` =:position WHERE `key` = 'position'")
+    void updatePosition(String position);
+
+
     @Query("SELECT value FROM AppState WHERE :key = `key`")
     LiveData<String> loadValueByKeyLive(String key);
 
