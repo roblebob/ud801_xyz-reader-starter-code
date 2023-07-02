@@ -50,6 +50,8 @@ public class ArticleDetailFragment extends Fragment {
     public ArticleDetailFragment() { /* Required empty public constructor */ }
 
 
+    private int mPosition = RecyclerView.NO_POSITION;
+
     private AppViewModel mViewModel;
 
 
@@ -57,6 +59,14 @@ public class ArticleDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+        int positionProposal = MainActivity.mCurrentPosition;
+        mPosition = ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition();
+        if (mPosition != positionProposal) {
+            Log.e(TAG, "------> MainActivity.mCurrentPosition (" + MainActivity.mCurrentPosition +") != Args (" + mPosition +")");
+        }
+
 
         mViewModel = new ViewModelProvider(this,
                 new AppViewModelFactory(requireActivity().getApplication() )
@@ -73,6 +83,7 @@ public class ArticleDetailFragment extends Fragment {
             public void onPageSelected(int position) {
                 mViewModel.updatePosition( position);
                 MainActivity.mCurrentPosition = position;
+                mPosition = position;
             }
             @Override
             public void onPageScrollStateChanged(int state) { }
@@ -86,10 +97,7 @@ public class ArticleDetailFragment extends Fragment {
             mArticleIdList.addAll( list);
             diffResult.dispatchUpdatesTo( mPagerAdapter);
 
-            mBinding.pager.setCurrentItem(
-                    MainActivity.mCurrentPosition, //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition(),
-                    false
-            );
+            mBinding.pager.setCurrentItem( mPosition, false);
         });
 
 
@@ -103,7 +111,7 @@ public class ArticleDetailFragment extends Fragment {
                     public void onMapSharedElements( List<String> names, Map<String, View> sharedElements) {
 
                         Fragment currentFragment = getChildFragmentManager().findFragmentByTag("f" +
-                                MainActivity.mCurrentPosition //ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition()
+                                mPosition
                         );
                         if (currentFragment == null) {
                             Log.e(TAG, "onMapSharedElements: currentFragment is null");

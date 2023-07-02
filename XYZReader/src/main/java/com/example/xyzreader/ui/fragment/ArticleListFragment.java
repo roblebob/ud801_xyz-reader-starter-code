@@ -61,12 +61,14 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         }
     }
 
+    int mPosition = RecyclerView.NO_POSITION;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "------> onCreateView()");
+        mPosition = RecyclerView.NO_POSITION;
 
 
 
@@ -82,26 +84,32 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                 .inflateTransition( R.transition.grid_exit_transition)
         );
 
+        mViewModel.getPosition().observe( getViewLifecycleOwner(), positionString -> {
+            int position = Integer.parseInt( positionString);
+            Log.d(TAG, "------> position:" + position);
+
+            setExitSharedElementCallback(
+                    new SharedElementCallback() {
+                        @Override
+                        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                            // Locate the ViewHolder for the clicked position.
+                            RecyclerView.ViewHolder selectedViewHolder = mBinding.recyclerView
+                                    .findViewHolderForAdapterPosition( position);
+                            if (selectedViewHolder == null) {
+                                return;
+                            }
+
+                            // Map the first shared element name to the child ImageView.
+                            sharedElements.put(names.get(0), selectedViewHolder.itemView.findViewById(R.id.thumbnail));
 
 
-        setExitSharedElementCallback(
-                new SharedElementCallback() {
-                    @Override
-                    public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                        // Locate the ViewHolder for the clicked position.
-                        RecyclerView.ViewHolder selectedViewHolder = mBinding.recyclerView
-                                .findViewHolderForAdapterPosition( MainActivity.mCurrentPosition);
-                        if (selectedViewHolder == null) {
-                            return;
+                            Log.e(TAG + " onMapSharedElements: ", names.get(0) + "  " + selectedViewHolder.itemView.findViewById(R.id.thumbnail));
                         }
+                    });
+        });
 
-                        // Map the first shared element name to the child ImageView.
-                        sharedElements.put(names.get(0), selectedViewHolder.itemView.findViewById(R.id.thumbnail));
 
 
-                        Log.e(TAG + " onMapSharedElements: ", names.get(0) + "  " + selectedViewHolder.itemView.findViewById(R.id.thumbnail));
-                    }
-                });
 
 
         postponeEnterTransition();

@@ -1,6 +1,7 @@
 package com.example.xyzreader.repository.worker;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -37,13 +38,15 @@ public class UpdateWorker  extends Worker {
         if (data == null) {
             return Result.failure();
         }
-        if (data.hasKeyWithValueOfType("position", Integer.class)) {
-            int position = data.getInt("position", -1);
-            mAppStateDao.updatePosition( String.valueOf(position));
+        if (data.hasKeyWithValueOfType(KEY_POSITION, Integer.class)) {
+            int position = data.getInt(KEY_POSITION, -1);
+            //mAppStateDao.updatePosition( String.valueOf(position));
+            mAppStateDao.insert( new AppState( KEY_POSITION, String.valueOf(position)));
+            Log.d(TAG, "doWork: position: " + position);
         }
-        if (data.hasKeyWithValueOfType("bposition", Integer.class) && data.hasKeyWithValueOfType("id", Integer.class) ) {
-            int bposition = data.getInt("bposition", -1);
-            int id = data.getInt("id", -1);
+        if (data.hasKeyWithValueOfType(KEY_BPOSITION, Integer.class) && data.hasKeyWithValueOfType(KEY_ID, Integer.class) ) {
+            int bposition = data.getInt(KEY_BPOSITION, -1);
+            int id = data.getInt(KEY_ID, -1);
             if (id > 0 && bposition > -1) {
                 mArticleDetailDao.updateBposition(id, bposition);
             }

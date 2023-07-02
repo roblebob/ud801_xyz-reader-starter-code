@@ -38,6 +38,7 @@ public class AppViewModel extends ViewModel {
     }
 
 
+    public LiveData<String> getPosition() { return mAppStateDao.loadValueByKeyLive( "position"); }
 
     public LiveData<String> getAppStateByKeyLive(String key) { return mAppStateDao.loadValueByKeyLive( key); }
 
