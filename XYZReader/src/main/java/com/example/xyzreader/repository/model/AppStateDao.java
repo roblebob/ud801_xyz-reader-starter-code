@@ -12,8 +12,12 @@ public interface AppStateDao {
     void insert(AppState appState);
 
 
+
     @Query(value = "UPDATE AppState SET `value` =:position WHERE `key` = 'position'")
     void updatePosition(String position);
+
+    @Query(value = "SELECT value FROM AppState WHERE `key` = 'position'")
+    String getPosition();
 
 
     @Query("SELECT value FROM AppState WHERE :key = `key`")

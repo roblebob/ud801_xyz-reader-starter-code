@@ -43,8 +43,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
     private AppViewModel mViewModel;
     ArticleListAdapter mArticleListAdapter;
 
-    //int mPosition = RecyclerView.NO_POSITION;
-    //MutableLiveData<Integer> positionLive;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,16 +60,12 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         }
     }
 
-    int mPosition = RecyclerView.NO_POSITION;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "------> onCreateView()");
-        mPosition = RecyclerView.NO_POSITION;
-
-
 
         mBinding = FragmentArticleListBinding.inflate( inflater, container, false);
         mArticleListAdapter = new ArticleListAdapter(  this);
@@ -79,19 +74,24 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
         mViewModel.getAppStateByKeyLive("upgrading").observe( getViewLifecycleOwner(), value -> mBinding.swipeRefreshLayout.setRefreshing( value != null));
 
-
         setExitTransition( TransitionInflater.from( requireContext())
                 .inflateTransition( R.transition.grid_exit_transition)
         );
 
         mViewModel.getPosition().observe( getViewLifecycleOwner(), positionString -> {
+            if (positionString == null) {
+                return;
+            }
             int position = Integer.parseInt( positionString);
             Log.d(TAG, "------> position:" + position);
+
+            mBinding.recyclerView.post( () ->  mBinding.recyclerView.scrollToPosition(position));
 
             setExitSharedElementCallback(
                     new SharedElementCallback() {
                         @Override
                         public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+
                             // Locate the ViewHolder for the clicked position.
                             RecyclerView.ViewHolder selectedViewHolder = mBinding.recyclerView
                                     .findViewHolderForAdapterPosition( position);
@@ -101,7 +101,6 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
                             // Map the first shared element name to the child ImageView.
                             sharedElements.put(names.get(0), selectedViewHolder.itemView.findViewById(R.id.thumbnail));
-
 
                             Log.e(TAG + " onMapSharedElements: ", names.get(0) + "  " + selectedViewHolder.itemView.findViewById(R.id.thumbnail));
                         }
@@ -143,7 +142,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
                                                 parentView.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                                                mBinding.recyclerView.scrollToPosition(MainActivity.mCurrentPosition);
+
                                                 Log.d(TAG, "------> rv ready by viewTreeObserver");
 
                                                 startPostponedEnterTransition();
@@ -205,8 +204,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                 ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
 
         action.setPosition( position);
-        MainActivity.mCurrentPosition = position;
-        mViewModel.updatePosition( position);
+        //mViewModel.updatePosition( position);
 
         View thumbnailView = view.findViewById( R.id.thumbnail);
 
@@ -216,9 +214,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
         NavController navController =  NavHostFragment.findNavController( this);
 
-
         navController.navigate( action, extras);
-
 
         Log.d(TAG, "------> onViewHolderClicked()  position:" + position + "  " + thumbnailView.getTransitionName());
     }

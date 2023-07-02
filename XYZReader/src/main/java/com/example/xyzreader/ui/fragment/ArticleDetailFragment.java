@@ -48,25 +48,17 @@ public class ArticleDetailFragment extends Fragment {
     private List<Integer> mArticleIdList = new ArrayList<>();
     public List<Integer> getArticleIdList() { return mArticleIdList; }
     public ArticleDetailFragment() { /* Required empty public constructor */ }
-
-
     private int mPosition = RecyclerView.NO_POSITION;
-
     private AppViewModel mViewModel;
-
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-        int positionProposal = MainActivity.mCurrentPosition;
-        mPosition = ArticleDetailFragmentArgs.fromBundle( requireArguments()).getPosition();
-        if (mPosition != positionProposal) {
-            Log.e(TAG, "------> MainActivity.mCurrentPosition (" + MainActivity.mCurrentPosition +") != Args (" + mPosition +")");
+        if (mPosition == RecyclerView.NO_POSITION) {
+            mPosition = ArticleDetailFragmentArgs.fromBundle(requireArguments()).getPosition();
         }
-
 
         mViewModel = new ViewModelProvider(this,
                 new AppViewModelFactory(requireActivity().getApplication() )
@@ -81,8 +73,9 @@ public class ArticleDetailFragment extends Fragment {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
             @Override
             public void onPageSelected(int position) {
+                Log.e(TAG, "onPageSelected: " + position);
                 mViewModel.updatePosition( position);
-                MainActivity.mCurrentPosition = position;
+                //MainActivity.mCurrentPosition = position;
                 mPosition = position;
             }
             @Override

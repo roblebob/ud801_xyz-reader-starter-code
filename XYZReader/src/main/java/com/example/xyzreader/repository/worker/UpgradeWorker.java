@@ -64,6 +64,10 @@ public class UpgradeWorker extends Worker {
 
         mAppStateDao.insert( new AppState("upgrading", "is upgrading"));
 
+        if (mAppStateDao.getPosition() == null) {
+            mAppStateDao.insert( new AppState("position", "0"));
+        }
+
         String string;
 
         try {
