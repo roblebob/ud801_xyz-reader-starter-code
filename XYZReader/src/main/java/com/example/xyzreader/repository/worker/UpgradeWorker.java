@@ -44,17 +44,16 @@ public class UpgradeWorker extends Worker {
     public static final String TAG = UpgradeWorker.class.getSimpleName();
     private final String SRC_URL;
     private static final int DEFAULT_COLOR = 0xFF333333;
-
     private final AppStateDao mAppStateDao;
-    private final ArticleDao mItemDao;
-    private final ArticleDetailDao mItemDetailDao;
+    private final ArticleDao mArticleDao;
+    private final ArticleDetailDao mArticleDetailDao;
 
     public UpgradeWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         AppDatabase appDatabase = AppDatabase.getInstance( context);
         mAppStateDao = appDatabase.appStateDao();
-        mItemDao = appDatabase.articleDao();
-        mItemDetailDao = appDatabase.articleDetailDao();
+        mArticleDao = appDatabase.articleDao();
+        mArticleDetailDao = appDatabase.articleDetailDao();
         SRC_URL = context.getString(R.string.src_url);
     }
 
@@ -62,54 +61,45 @@ public class UpgradeWorker extends Worker {
     @Override
     public Result doWork() {
 
+        // telling everybody that we started
         mAppStateDao.insert( new AppState("upgrading", "is upgrading"));
 
+        // if position is null, then we are upgrading for the first time
         if (mAppStateDao.getPosition() == null) {
             mAppStateDao.insert( new AppState("position", "0"));
         }
 
+        // getting the data as json string from the server
         String string;
-
         try {
-            Request request = new Request.Builder()
-                    .url(new URL(SRC_URL))
-                    .build();
-
-            Response response = new OkHttpClient()
-                    .newCall(request)
-                    .execute();
-
+            Request request = new Request.Builder() .url(new URL(SRC_URL)) .build();
+            Response response = new OkHttpClient() .newCall(request) .execute();
             string = response.body().string();
-
-            if (string.isEmpty()) {
-                throw new IOException("Empty string");
-            }
-
+            if (string.isEmpty()) { throw new IOException("Empty string"); }
         } catch (IOException e) {
             e.printStackTrace();
-            mAppStateDao.insert( new AppState("upgrading", null));
+            mAppStateDao.insert( new AppState("upgrading", null));  // telling everybody that we stopped
             return Result.failure();
         }
 
-
+        // checking if the data (json response string) has changed by using checksums (CRC32)
         String oldChecksum = mAppStateDao.loadValueByKey("checksum");
         String newChecksum = String.valueOf(getCRC32Checksum(string));
 
-
         if (oldChecksum != null && oldChecksum.equals(newChecksum)) {
-            mAppStateDao.insert( new AppState("upgrading", null));
-            Log.d(TAG, "nothing to be updated");
+            Log.d(TAG, "nothing to be upgraded");
+            mAppStateDao.insert( new AppState("upgrading", null)); // telling everybody that we stopped
             return Result.success();
         }
 
 
 
+        // upgrading by integrating translated JSON data into the database
         try {
             Object object = new JSONTokener( string) .nextValue();
 
             if (!(object instanceof JSONArray)) { throw new JSONException("Expected JSONArray"); }
             JSONArray jsonArray = (JSONArray) object;
-
 
             for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -125,31 +115,36 @@ public class UpgradeWorker extends Worker {
                 String publishedDate = jsonObject.getString("published_date");
 
 
-
+                // getting the color from the thumbnail image to individualise article experience
+                int color = DEFAULT_COLOR;
                 try {
                     InputStream inputStream  = new java.net.URL(thumb).openStream();
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     Palette p = Palette.from(bitmap).generate();
-                    int color = p.getDarkMutedColor(DEFAULT_COLOR);
-                    mItemDao.insert( new Article( id, title, author, thumb, aspectRatio, publishedDate, color));
-
+                    color = p.getDarkMutedColor(DEFAULT_COLOR);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    mItemDao.insert( new Article( id, title, author, thumb, aspectRatio, publishedDate, DEFAULT_COLOR));
                 }
 
+
+                // distributing the data into 2 distinct entities, combined makes up an article,
+                // since the overview fragment (ArticleListFragment) does not need the detailed data
+                mArticleDao.insert( new Article( id, title, author, thumb, aspectRatio, publishedDate, color));
+                mArticleDetailDao.insert( new ArticleDetail( id, body, photo, 0));
+
+
+                // mark that a response having that checksum has been processed
                 mAppStateDao.insert( new AppState("checksum", newChecksum));
-                mItemDetailDao.insert( new ArticleDetail( id, body, photo, 0));
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-            mAppStateDao.insert( new AppState("upgrading", null));
+            mAppStateDao.insert( new AppState("upgrading", null)); // telling everybody that we stopped
             return Result.failure();
         }
 
 
-        mAppStateDao.insert( new AppState("upgrading", null));
+        mAppStateDao.insert( new AppState("upgrading", null));  // telling everybody that we stopped
         return Result.success();
     }
 

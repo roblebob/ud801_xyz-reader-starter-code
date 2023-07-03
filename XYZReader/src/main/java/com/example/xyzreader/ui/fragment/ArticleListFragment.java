@@ -48,16 +48,11 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "------> onCreate()");
 
-        mViewModel = new ViewModelProvider(this,
-                new AppViewModelFactory( requireActivity().getApplication())
-        ).get(AppViewModel.class);
+        mViewModel = new ViewModelProvider(this, new AppViewModelFactory(
+                requireActivity().getApplication()) ).get(AppViewModel.class);
 
-        if (savedInstanceState == null) {
-            mViewModel.upgrade();
-            Log.d(TAG, "------> upgrading");
-        }
+        if (savedInstanceState == null) { mViewModel.upgrade(); }
     }
 
 
@@ -65,7 +60,6 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "------> onCreateView()");
 
         mBinding = FragmentArticleListBinding.inflate( inflater, container, false);
         mArticleListAdapter = new ArticleListAdapter(  this);
@@ -75,18 +69,17 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         mViewModel.getAppStateByKeyLive("upgrading").observe( getViewLifecycleOwner(), value -> mBinding.swipeRefreshLayout.setRefreshing( value != null));
 
         setExitTransition( TransitionInflater.from( requireContext())
-                .inflateTransition( R.transition.grid_exit_transition)
-        );
+                .inflateTransition( R.transition.grid_exit_transition) );
 
         mViewModel.getPosition().observe( getViewLifecycleOwner(), positionString -> {
             if (positionString == null) {
                 return;
             }
             int position = Integer.parseInt( positionString);
-            Log.d(TAG, "------> position:" + position);
 
             mBinding.recyclerView.post( () ->  mBinding.recyclerView.scrollToPosition(position));
 
+            // TODO
             setExitSharedElementCallback(
                     new SharedElementCallback() {
                         @Override
@@ -101,15 +94,9 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
                             // Map the first shared element name to the child ImageView.
                             sharedElements.put(names.get(0), selectedViewHolder.itemView.findViewById(R.id.thumbnail));
-
-                            Log.e(TAG + " onMapSharedElements: ", names.get(0) + "  " + selectedViewHolder.itemView.findViewById(R.id.thumbnail));
                         }
                     });
         });
-
-
-
-
 
         postponeEnterTransition();
 
@@ -120,18 +107,20 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
 
 
 
+    // when the fragment's view is created, we can start observing more live data,
+    // update the adapter, and start listen to the entire view hierarchy.
+    // when it's ready, the recyclerview has to be ready since it is part of it,
+    // and we can start the postponed transition
+    // (as it is suggested by https://developer.android.com/guide/fragments/animate#recyclerview)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Log.d(TAG, "------> onViewCreated()");
 
         final ViewGroup parentView = (ViewGroup) view.getParent();
         mViewModel.getArticleListLive().observe(getViewLifecycleOwner(),
                 new Observer<List<Article>>() {
                     @Override
                     public void onChanged(List<Article> articles) {
-                        Log.d(TAG, "------> onChanged()   articles.size():" + articles.size());
                         mArticleListAdapter.update( articles);
 
                         parentView.getViewTreeObserver()
@@ -139,12 +128,7 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
                                         new ViewTreeObserver.OnPreDrawListener() {
                                             @Override
                                             public boolean onPreDraw() {
-
                                                 parentView.getViewTreeObserver().removeOnPreDrawListener(this);
-
-
-                                                Log.d(TAG, "------> rv ready by viewTreeObserver");
-
                                                 startPostponedEnterTransition();
                                                 return true;
                                             }
@@ -155,28 +139,14 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
     }
 
 
-
-
-
-
-
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.d(TAG, "------> onViewStateRestored()");
-    }
-
-
     @Override
     public void onStart() {
         super.onStart();
 
+        // when the app bar is collapsed, we want to hide the app bar and show the recycler view
+        // and when the app bar is expanded, we want to show the app bar and hide the recycler view
         mBinding.appBarLayout .addOnOffsetChangedListener( (appBarLayout1, verticalOffset) -> {
-
             float ratio = ((float) (appBarLayout1.getTotalScrollRange() + verticalOffset)) / appBarLayout1.getTotalScrollRange();
-            //Log.d(TAG, "----> " + verticalOffset + "  " + ratio );
-
             appBarLayout1.setAlpha(ratio);
             mBinding.recyclerView.setAlpha( 1.0f - ratio);
             mBinding.logoIv.setScaleX( ratio);
@@ -195,16 +165,16 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
     }
 
 
+    // CAllback from the adapter, to navigate to the detail fragment
     @Override
     public void onViewHolderClicked(View view, int position) {
-
+        // Since the exit transition is fade out, we need to exclude the clicked view from the transition
         ((TransitionSet) getExitTransition()).excludeTarget(view, true);
 
         ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
                 ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();
 
         action.setPosition( position);
-        //mViewModel.updatePosition( position);
 
         View thumbnailView = view.findViewById( R.id.thumbnail);
 
@@ -215,8 +185,6 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
         NavController navController =  NavHostFragment.findNavController( this);
 
         navController.navigate( action, extras);
-
-        Log.d(TAG, "------> onViewHolderClicked()  position:" + position + "  " + thumbnailView.getTransitionName());
     }
 }
 

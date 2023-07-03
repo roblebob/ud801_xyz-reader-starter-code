@@ -23,14 +23,6 @@ public class ArticleDetail {
     }
 
 
-    @Ignore
-    public ArticleDetail(ArticleDetail articleDetail) {
-        this.id = articleDetail.id;
-        this.body = articleDetail.body;
-        this.photo = articleDetail.photo;
-        this.bposition = articleDetail.bposition;
-    }
-
     public int getId() {
         return id;
     }
