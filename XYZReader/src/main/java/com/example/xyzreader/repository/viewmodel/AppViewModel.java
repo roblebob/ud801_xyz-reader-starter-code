@@ -20,8 +20,6 @@ import com.example.xyzreader.repository.worker.UpgradeWorker;
 import java.util.List;
 
 public class AppViewModel extends ViewModel {
-    public static final String TAG = AppViewModel.class.getSimpleName();
-
     private final WorkManager mWorkManager;
     AppStateDao mAppStateDao;
     ArticleDao mArticleDao;

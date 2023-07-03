@@ -17,5 +17,4 @@ public interface ArticleDetailDao {
 
     @Query(value = "UPDATE ArticleDetail SET `bposition` = :bposition WHERE id = :id ")
     void updateBposition(int id, int bposition);
-
 }

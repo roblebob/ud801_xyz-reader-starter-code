@@ -16,13 +16,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.transition.TransitionInflater;
 import androidx.transition.TransitionSet;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import com.example.xyzreader.MainActivity;
 import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentArticleListBinding;
 import com.example.xyzreader.repository.model.Article;
@@ -32,12 +30,12 @@ import com.example.xyzreader.ui.adapter.ArticleListAdapter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ArticleListFragment extends Fragment implements ArticleListAdapter.ViewHolderListener {
-    public static final String TAG = ArticleListFragment.class.getSimpleName();
     public ArticleListFragment() { /* Required empty public constructor */ }
     FragmentArticleListBinding mBinding;
     private AppViewModel mViewModel;
@@ -165,11 +163,11 @@ public class ArticleListFragment extends Fragment implements ArticleListAdapter.
     }
 
 
-    // CAllback from the adapter, to navigate to the detail fragment
+    // Callback from the adapter, to navigate to the detail fragment
     @Override
     public void onViewHolderClicked(View view, int position) {
         // Since the exit transition is fade out, we need to exclude the clicked view from the transition
-        ((TransitionSet) getExitTransition()).excludeTarget(view, true);
+        ((TransitionSet) Objects.requireNonNull(getExitTransition())).excludeTarget(view, true);
 
         ArticleListFragmentDirections.ActionArticleListFragmentToArticleDetailFragment action =
                 ArticleListFragmentDirections.actionArticleListFragmentToArticleDetailFragment();

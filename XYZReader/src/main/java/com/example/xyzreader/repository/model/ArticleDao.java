@@ -17,9 +17,6 @@ public interface ArticleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void update( Article article);
 
-    @Query(value = "UPDATE Article SET `color` = :color WHERE id = :id ")
-    void updateColor(int id, int color);
-
     @Query("SELECT * FROM Article ORDER BY publishedDate DESC")
     LiveData<List<Article>> loadArticleListLive();
 

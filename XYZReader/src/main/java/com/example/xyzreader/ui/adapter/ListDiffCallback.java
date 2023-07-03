@@ -7,8 +7,8 @@ import java.util.List;
 
 public class ListDiffCallback<T> extends DiffUtil.Callback {
 
-    private List<T> mOld;
-    private List<T> mNew;
+    private final List<T> mOld;
+    private final List<T> mNew;
 
     public ListDiffCallback(List<T> oldList , List<T> newList ) {
         super();

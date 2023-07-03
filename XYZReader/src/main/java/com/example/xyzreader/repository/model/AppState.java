@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "AppState", indices = @Index(value = {"key"}, unique = true))
 public class AppState {
     @PrimaryKey(autoGenerate = true )     private int     id;
-    @ColumnInfo(name = "key")             private String  key;
-    @ColumnInfo(name = "value")           private String  value;
+    @ColumnInfo(name = "key")             private final String  key;
+    @ColumnInfo(name = "value")           private final String  value;
 
     public AppState(String key, String value) {
         this.key = key;
@@ -26,14 +26,8 @@ public class AppState {
     public String getKey() {
         return key;
     }
-    public void setKey(String key) {
-        this.key = key;
-    }
 
     public String getValue() {
         return value;
-    }
-    public void setValue(String value) {
-        this.value = value;
     }
 }

@@ -38,7 +38,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         mContext = articleListFragment.requireContext();
     }
 
-    private ArrayList<Article> mArticleList = new ArrayList<>();
+    private final ArrayList<Article> mArticleList = new ArrayList<>();
     public void update(List<Article> itemList) {
 
         ListDiffCallback<Article> listDiffCallback = new ListDiffCallback<>(mArticleList, itemList);

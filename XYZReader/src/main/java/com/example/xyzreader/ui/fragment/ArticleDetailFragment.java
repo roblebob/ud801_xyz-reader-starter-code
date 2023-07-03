@@ -3,15 +3,11 @@ package com.example.xyzreader.ui.fragment;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -21,10 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.xyzreader.MainActivity;
 import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentArticleDetailBinding;
-import com.example.xyzreader.repository.model.Article;
 import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ListDiffCallback;
@@ -45,7 +39,7 @@ public class ArticleDetailFragment extends Fragment {
     public static final String TAG = ArticleDetailFragment.class.getSimpleName();
     private FragmentArticleDetailBinding mBinding;
     private FragmentStateAdapter mPagerAdapter;
-    private List<Integer> mArticleIdList = new ArrayList<>();
+    private final List<Integer> mArticleIdList = new ArrayList<>();
     public List<Integer> getArticleIdList() { return mArticleIdList; }
     public ArticleDetailFragment() { /* Required empty public constructor */ }
     private int mPosition = RecyclerView.NO_POSITION;

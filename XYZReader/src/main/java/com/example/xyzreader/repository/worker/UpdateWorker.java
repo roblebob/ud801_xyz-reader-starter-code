@@ -12,8 +12,6 @@ import androidx.work.WorkerParameters;
 import com.example.xyzreader.repository.model.AppDatabase;
 import com.example.xyzreader.repository.model.AppState;
 import com.example.xyzreader.repository.model.AppStateDao;
-import com.example.xyzreader.repository.model.Article;
-import com.example.xyzreader.repository.model.ArticleDao;
 import com.example.xyzreader.repository.model.ArticleDetailDao;
 
 public class UpdateWorker  extends Worker {
@@ -36,12 +34,8 @@ public class UpdateWorker  extends Worker {
     public Result doWork() {
 
         Data data = getInputData();
-        if (data == null) {
-            return Result.failure();
-        }
         if (data.hasKeyWithValueOfType(KEY_POSITION, Integer.class)) {
             int position = data.getInt(KEY_POSITION, RecyclerView.NO_POSITION);
-            //mAppStateDao.updatePosition( String.valueOf(position));
             mAppStateDao.insert( new AppState( KEY_POSITION, String.valueOf(position)));
             Log.d(TAG, "doWork: position: " + position);
         }

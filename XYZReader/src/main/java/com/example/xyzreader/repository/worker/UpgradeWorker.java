@@ -73,8 +73,9 @@ public class UpgradeWorker extends Worker {
         String string;
         try {
             Request request = new Request.Builder() .url(new URL(SRC_URL)) .build();
-            Response response = new OkHttpClient() .newCall(request) .execute();
+            Response response = new OkHttpClient().newCall(request).execute();
             string = response.body().string();
+            response.close();
             if (string.isEmpty()) { throw new IOException("Empty string"); }
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,7 +112,6 @@ public class UpgradeWorker extends Worker {
                 ArrayList<String> body = Util.processArticleBody( jsonObject.getString("body" ));
                 String thumb = jsonObject.getString("thumb");
                 String photo = jsonObject.getString("photo");
-                double aspectRatio = jsonObject.getDouble("aspect_ratio");
                 String publishedDate = jsonObject.getString("published_date");
 
 
@@ -129,7 +129,7 @@ public class UpgradeWorker extends Worker {
 
                 // distributing the data into 2 distinct entities, combined makes up an article,
                 // since the overview fragment (ArticleListFragment) does not need the detailed data
-                mArticleDao.insert( new Article( id, title, author, thumb, aspectRatio, publishedDate, color));
+                mArticleDao.insert( new Article( id, title, author, thumb,  publishedDate, color));
                 mArticleDetailDao.insert( new ArticleDetail( id, body, photo, 0));
 
 

@@ -3,41 +3,24 @@ package com.example.xyzreader.ui.fragment;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Transition;
-import androidx.transition.TransitionInflater;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.databinding.FragmentScreenSlidePageBinding;
-import com.example.xyzreader.repository.model.Article;
-import com.example.xyzreader.repository.model.ArticleDetail;
 import com.example.xyzreader.repository.viewmodel.AppViewModel;
 import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ArticleBodyAdapter;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
-
-import java.util.List;
-import java.util.Map;
 
 
 
@@ -47,7 +30,6 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class ScreenSlidePageFragment extends Fragment {
-    public static final String TAG = ScreenSlidePageFragment.class.getSimpleName();
     private static final String ID = "id";
     private static final String POS = "pos";
     private int mId;
@@ -100,7 +82,7 @@ public class ScreenSlidePageFragment extends Fragment {
         mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
         mLinearLayoutManager = new LinearLayoutManager( requireContext(), RecyclerView.VERTICAL, false);
         mBinding.articleBodyRv.setLayoutManager( mLinearLayoutManager);
-        mBinding.materialToolbar.setNavigationOnClickListener(v -> { navigateUp(); });
+        mBinding.materialToolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.photo.setTransitionName(String.valueOf(mPos));
 
         mViewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
@@ -138,16 +120,6 @@ public class ScreenSlidePageFragment extends Fragment {
                         }
                     });
         });
-
-        mBinding.articleBodyRv.addOnScrollListener( new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                    Log.e(TAG, "----->  onScrollStateChanged!!!      bpos:" + mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
-                }
-            }
-        });
-
         return mBinding.getRoot();
     }
 
@@ -157,12 +129,10 @@ public class ScreenSlidePageFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mViewModel.updateBposition( mId, mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
-        Log.e(TAG, "----->  onPause!!!      bpos:" + mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
+        mViewModel.updateBposition( mId, mLinearLayoutManager.findFirstCompletelyVisibleItemPosition()); // save scroll position
     }
 
     private void navigateUp() {
-        Log.e(TAG, "----->  onBack!!!      pos:" + mPos);
         assert this.getParentFragment() != null;
         NavController navController = NavHostFragment.findNavController( this.getParentFragment());
         navController.navigateUp();
