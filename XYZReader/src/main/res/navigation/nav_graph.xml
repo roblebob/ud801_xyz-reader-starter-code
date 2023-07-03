@@ -20,17 +20,6 @@
             app:destination="@id/articleDetailFragment"
             />
 
-        <!--argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="0"
-            /-->
-
-        <!--argument
-            android:name="position"
-            app:argType="integer"
-            android:defaultValue="0"
-            /-->
     </fragment>
 
 
@@ -43,21 +32,6 @@
         tools:layout="@layout/fragment_article_detail"
         >
 
-        <!--action
-            android:id="@+id/action_articleDetailFragment_to_articleListFragment"
-            app:destination="@id/articleListFragment"
-            app:popUpTo="@+id/articleListFragment"
-            app:popUpToInclusive="true"
-            app:popUpToSaveState="true"
-            /-->
-
-
-
-        <!--argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="1"
-            /-->
         <argument
             android:name="position"
             app:argType="integer"

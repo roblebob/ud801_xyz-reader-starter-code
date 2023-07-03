@@ -37,7 +37,6 @@ public class UpdateWorker  extends Worker {
         if (data.hasKeyWithValueOfType(KEY_POSITION, Integer.class)) {
             int position = data.getInt(KEY_POSITION, RecyclerView.NO_POSITION);
             mAppStateDao.insert( new AppState( KEY_POSITION, String.valueOf(position)));
-            Log.d(TAG, "doWork: position: " + position);
         }
         if (data.hasKeyWithValueOfType(KEY_BPOSITION, Integer.class) && data.hasKeyWithValueOfType(KEY_ID, Integer.class) ) {
             int bposition = data.getInt(KEY_BPOSITION, RecyclerView.NO_POSITION);

@@ -67,9 +67,7 @@ public class ArticleDetailFragment extends Fragment {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
             @Override
             public void onPageSelected(int position) {
-                Log.e(TAG, "onPageSelected: " + position);
                 mViewModel.updatePosition( position);
-                //MainActivity.mCurrentPosition = position;
                 mPosition = position;
             }
             @Override
@@ -86,8 +84,6 @@ public class ArticleDetailFragment extends Fragment {
 
             mBinding.pager.setCurrentItem( mPosition, false);
         });
-
-
 
         setSharedElementEnterTransition( TransitionInflater.from( requireContext())
                 .inflateTransition( R.transition.image_shared_element_transition));
@@ -110,9 +106,7 @@ public class ArticleDetailFragment extends Fragment {
                             return;
                         }
 
-                        Log.e(TAG, names.get(0) + " of " + names.size() + "  " + view.findViewById(R.id.photo));
-
-                        // Map the first shared element name to the child ImageView.
+                        // Map the first shared element name, since it is the only one, to the child ImageView.
                         sharedElements.put(names.get(0), view.findViewById(R.id.photo));
                     }
                 });
