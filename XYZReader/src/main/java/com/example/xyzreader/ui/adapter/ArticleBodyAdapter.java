@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui.adapter;
 
+import android.graphics.Color;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,19 +19,34 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
     public ArticleBodyAdapter() {}
 
 
+    /**
+     * Note, that the 0th item in the list is a blank space, for convenience.
+     */
     ArrayList<String> mBodyList = new ArrayList<>();
     public void submit(List<String> bodyList) {
-        ListDiffCallback<String> listDiffCallback = new ListDiffCallback<>( mBodyList, bodyList);
+        ArrayList<String> newBodyList = new ArrayList<>( bodyList);
+        newBodyList.add( 0, " ");
+        ListDiffCallback<String> listDiffCallback = new ListDiffCallback<>( mBodyList, newBodyList);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff( listDiffCallback);
         mBodyList.clear();
-        mBodyList.addAll( bodyList);
+        mBodyList.addAll( newBodyList);
         diffResult.dispatchUpdatesTo( this);
     }
 
     private int mColor;
     public void setColor (int color) {
         mColor = color;
-        //notifyDataSetChanged();
+    }
+
+    private int mCurrentBposition;
+    public void setCurrentBposition(int newBposition) {
+        if (mCurrentBposition == newBposition) {
+            return;
+        }
+        int oldBposition = mCurrentBposition;
+        mCurrentBposition = newBposition;
+        notifyItemChanged( oldBposition);
+        notifyItemChanged( mCurrentBposition);
     }
 
 
@@ -42,13 +58,23 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText(Html.fromHtml( mBodyList.get( position), Html.FROM_HTML_MODE_COMPACT));
-        holder.positionTv.setText( String.valueOf( position));
+    public void onBindViewHolder(@NonNull ViewHolder holder, int bposition) {
+        holder.textView.setText(Html.fromHtml( mBodyList.get( bposition), Html.FROM_HTML_MODE_COMPACT));
+        holder.positionTv.setText( String.valueOf( bposition));
+
         if (mColor != 0) {
-            holder.positionTv.setTextColor( mColor);
+            if (bposition > 0) {
+                holder.positionTv.setTextColor( mColor);
+            } else {
+                holder.positionTv.setTextColor(Color.TRANSPARENT);
+            }
         }
 
+        if (bposition > 0 && bposition == mCurrentBposition) {
+            holder.textView.setBackgroundColor( mColor);
+        }  else {
+            holder.textView.setBackgroundColor( Color.TRANSPARENT);
+        }
     }
 
     @Override
@@ -56,7 +82,7 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
         return mBodyList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
         public TextView positionTv;
 

@@ -1,5 +1,7 @@
 package com.example.xyzreader.ui.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +25,11 @@ import com.example.xyzreader.repository.viewmodel.AppViewModelFactory;
 import com.example.xyzreader.ui.adapter.ArticleBodyAdapter;
 import com.example.xyzreader.ui.helper.ImageLoaderHelper;
 
+import java.util.ArrayList;
+import java.util.List;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ScreenSlidePageFragment#newInstance} factory method to
- * create an instance of this fragment.
+/** This Fragment is the template of the ViewPager2 within the ArticleDetailFragment.
+ *  It thereby replaces the old ArticleDetailFragment.
  */
 public class ScreenSlidePageFragment extends Fragment {
     private static final String ID = "id";
@@ -37,8 +39,6 @@ public class ScreenSlidePageFragment extends Fragment {
     public ScreenSlidePageFragment() { /* Required empty public constructor */ }
     private ArticleBodyAdapter mArticleBodyAdapter;
     private AppViewModel mViewModel;
-
-
     private LinearLayoutManager mLinearLayoutManager;
     private FragmentScreenSlidePageBinding mBinding;
 
@@ -78,12 +78,19 @@ public class ScreenSlidePageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
-        mBinding.materialToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
         mLinearLayoutManager = new LinearLayoutManager( requireContext(), RecyclerView.VERTICAL, false);
         mBinding.articleBodyRv.setLayoutManager( mLinearLayoutManager);
-        mBinding.materialToolbar.setNavigationOnClickListener(v -> navigateUp());
+
+        mBinding.materialToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        mBinding.materialToolbar.setNavigationOnClickListener(v -> {
+            assert this.getParentFragment() != null;
+            NavController navController = NavHostFragment.findNavController( this.getParentFragment());
+            navController.navigateUp();
+        });
+
         mBinding.photo.setTransitionName(String.valueOf(mPos));
+
 
         mViewModel.getArticleByIdLive( mId).observe( getViewLifecycleOwner(), article -> {
             mBinding.materialToolbar.setTitle( article.getTitle());
@@ -92,11 +99,7 @@ public class ScreenSlidePageFragment extends Fragment {
         });
         mViewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
             mArticleBodyAdapter.submit( detail.getBody());
-            if (detail.getBposition() > 0) {
-                //mBinding.appBarLayout.setExpanded(false);
-                mBinding.articleBodyRv.post(() -> mBinding.articleBodyRv.scrollToPosition( detail.getBposition()));
-            }
-
+            mBinding.articleBodyRv.post(() -> mBinding.articleBodyRv.scrollToPosition( detail.getBposition()));
             ImageLoaderHelper
                     .getInstance(getActivity())
                     .getImageLoader()
@@ -120,22 +123,80 @@ public class ScreenSlidePageFragment extends Fragment {
                         }
                     });
         });
+
+
+        /*
+         * highlights the current paragraph
+         */
+        mBinding.articleBodyRv.addOnScrollListener( new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                mArticleBodyAdapter.setCurrentBposition( findBposition());
+            }
+        });
+
+
+        /*
+         * copies the current paragraph to the clipboard
+         */
+        mBinding.shareFab.setOnClickListener(v -> {
+            int currentBpos = findBposition();
+            RecyclerView.ViewHolder selectedViewHolder = mBinding.articleBodyRv.findViewHolderForAdapterPosition( currentBpos);
+            if (selectedViewHolder == null) {
+                return;
+            }
+            if (selectedViewHolder instanceof ArticleBodyAdapter.ViewHolder) {
+                String clipboardText = ((ArticleBodyAdapter.ViewHolder) selectedViewHolder).textView.getText().toString();
+                ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(this.getContext().CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText(String.valueOf( currentBpos), clipboardText);
+                clipboard.setPrimaryClip(clip);
+            }
+
+        });
+
         return mBinding.getRoot();
     }
 
 
 
 
+
+    /**
+     * Find the current bposition (body position) of the first completely visible item of the
+     * ArticleBodyAdapter (current paragraph)
+     * Note, the first item 0 is blank, we start with 1
+     * @return int
+     */
+    public int findBposition() {
+
+        int bposition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
+
+        if (bposition > RecyclerView.NO_POSITION) {
+            return (bposition > 0) ? bposition : 1;
+        }
+
+        List<Integer> list = new ArrayList<>();
+        list.add( mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
+        list.add( mLinearLayoutManager.findFirstVisibleItemPosition());
+        list.add( mLinearLayoutManager.findLastCompletelyVisibleItemPosition());
+        list.add( mLinearLayoutManager.findLastVisibleItemPosition());
+        list.removeIf( i -> i == RecyclerView.NO_POSITION);
+        int res = (int) list.stream().mapToDouble(i -> i).average().getAsDouble();
+        return (res > 0) ? res : 1;
+    }
+
+
+
+
+
+    /**
+     * Save scroll position
+     */
     @Override
     public void onPause() {
         super.onPause();
-        mViewModel.updateBposition( mId, mLinearLayoutManager.findFirstCompletelyVisibleItemPosition()); // save scroll position
-    }
-
-    private void navigateUp() {
-        assert this.getParentFragment() != null;
-        NavController navController = NavHostFragment.findNavController( this.getParentFragment());
-        navController.navigateUp();
+        mViewModel.updateBposition( mId, findBposition());
     }
 
 }

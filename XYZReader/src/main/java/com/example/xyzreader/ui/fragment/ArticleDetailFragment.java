@@ -28,12 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// IMPORTANT NOTE:
-//      This replaces the old ArticleDetailActivity, not the old ArticleDetailFragment.
-//      The latter is replaced by the new SlidingPageFragment!!!
-
-/**
- * A simple {@link Fragment} subclass.
+/** This Fragment holds the ViewPager2 that displays the individual SlidingPageFragment.
+ *  It thereby replaces the old ArticleDetailActivity, not the old ArticleDetailFragment.
+ *  The letter is replaced by the new SlidingPageFragment, as mentioned.
  */
 public class ArticleDetailFragment extends Fragment {
     public static final String TAG = ArticleDetailFragment.class.getSimpleName();
