@@ -103,7 +103,7 @@ public class ScreenSlidePageFragment extends Fragment {
             mArticleBodyAdapter.update( detail.getBody());
             mBinding.articleBodyRv.post(() -> mBinding.articleBodyRv.scrollToPosition( detail.getBposition()));
             ImageLoaderHelper
-                    .getInstance(getActivity())
+                    .getInstance(requireActivity().getApplicationContext())
                     .getImageLoader()
                     .get(detail.getPhoto(), new ImageLoader.ImageListener() {
                         @Override

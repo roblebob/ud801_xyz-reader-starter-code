@@ -62,7 +62,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         holder.yearView.setText( Util.extractYear( article.getPublishedDate()));
         holder.authorView.setText( article.getAuthor());
         holder.thumbnailView.setTransitionName( String.valueOf( position));
-        holder.thumbnailView.setImageUrl( article.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
+        holder.thumbnailView.setImageUrl( article.getThumb(), ImageLoaderHelper.getInstance( mContext.getApplicationContext()).getImageLoader());
     }
 
     @Override
