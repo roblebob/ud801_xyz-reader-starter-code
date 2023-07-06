@@ -1,20 +1,17 @@
 package com.example.xyzreader.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.repository.model.Article;
 import com.example.xyzreader.ui.fragment.ArticleListFragment;
@@ -30,15 +27,14 @@ import java.util.List;
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.ViewHolder> {
     public static final String TAG = ArticleListAdapter.class.getSimpleName();
     private final Context mContext;
-
-
+    private final ArrayList<Article> mArticleList = new ArrayList<>();
+    private final ViewHolderListener mViewHolderListener;
 
     public ArticleListAdapter(ArticleListFragment articleListFragment) {
         mViewHolderListener = articleListFragment;
         mContext = articleListFragment.requireContext();
     }
 
-    private final ArrayList<Article> mArticleList = new ArrayList<>();
     public void update(List<Article> itemList) {
 
         ListDiffCallback<Article> listDiffCallback = new ListDiffCallback<>(mArticleList, itemList);
@@ -65,29 +61,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         holder.titleView.setText( article.getTitle());
         holder.yearView.setText( Util.extractYear( article.getPublishedDate()));
         holder.authorView.setText( article.getAuthor());
-        holder.idView.setText( String.valueOf( article.getId()));
-        holder.posView.setText( String.valueOf( position));
         holder.thumbnailView.setTransitionName( String.valueOf( position));
-
-        //holder.thumbnailView.setImageUrl( item.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
-        ImageLoaderHelper
-                .getInstance(mContext.getApplicationContext())
-                .getImageLoader()
-                .get(article.getThumb(), new ImageLoader.ImageListener() {
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                        Bitmap bitmap = imageContainer.getBitmap();
-                        if (bitmap != null) {
-                            holder.thumbnailView.setImageBitmap( imageContainer.getBitmap());
-                            Log.d(TAG, "thumb " + holder.getBindingAdapterPosition() +"   (onResponse)");
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.e(TAG, "thumb " + holder.getBindingAdapterPosition() +"   (onErrorResponse)");
-                    }
-                });
+        holder.thumbnailView.setImageUrl( article.getThumb(), ImageLoaderHelper.getInstance( mContext).getImageLoader());
     }
 
     @Override
@@ -101,19 +76,17 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     public interface ViewHolderListener {
         void onViewHolderClicked(View view, int position);
     }
-    private final ViewHolderListener mViewHolderListener;
+
 
 
 
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public MaterialCardView cardView;
-        public ImageView thumbnailView;
+        public NetworkImageView thumbnailView;
         public TextView titleView;
         public TextView authorView;
         public TextView yearView;
-        public TextView idView;
-        public TextView posView;
 
         private final ViewHolderListener viewHolderListener;
 
@@ -124,8 +97,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             titleView = view.findViewById(R.id.list_item_article__title_tv);
             authorView = view.findViewById(R.id.list_item_article__author_tv);
             yearView = view.findViewById(R.id.list_item_article__year_tv);
-            idView = view.findViewById(R.id.list_item_article__id);
-            posView = view.findViewById(R.id.list_item_article__pos);
             this.viewHolderListener = viewHolderListener;
             view.setOnClickListener(this);
         }

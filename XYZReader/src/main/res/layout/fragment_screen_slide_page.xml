@@ -48,20 +48,15 @@
                 android:layout_height="?attr/actionBarSize"
                 android:minHeight="?attr/actionBarSize"
                 android:background="@android:color/transparent"
-                android:elevation="0dp"
                 app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_arrow_back"
-                app:subtitle="subtitle"
                 >
 
 
             </com.google.android.material.appbar.MaterialToolbar>
 
 
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-
 
         
     </com.google.android.material.appbar.AppBarLayout>
@@ -73,7 +68,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:scrollbars="vertical"
         android:scrollbarStyle="outsideOverlay"
-        app:layoutManager="LinearLayoutManager"
         />
 
 

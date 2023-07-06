@@ -3,6 +3,7 @@ package com.example.xyzreader.ui.fragment;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** This Fragment holds the ViewPager2 that displays the individual SlidingPageFragment.
+/** This Fragment holds the ViewPager2 that displays the individual SlidingPageFragments.
  *  It thereby replaces the old ArticleDetailActivity, not the old ArticleDetailFragment.
  *  The letter is replaced by the new SlidingPageFragment, as mentioned.
  */
@@ -40,24 +41,26 @@ public class ArticleDetailFragment extends Fragment {
     public List<Integer> getArticleIdList() { return mArticleIdList; }
     public ArticleDetailFragment() { /* Required empty public constructor */ }
     private int mPosition = RecyclerView.NO_POSITION;
-    private AppViewModel mViewModel;
+    //private AppViewModel mViewModel;
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPosition = ArticleDetailFragmentArgs.fromBundle(requireArguments()).getPosition();
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
 
-        if (mPosition == RecyclerView.NO_POSITION) {
-            mPosition = ArticleDetailFragmentArgs.fromBundle(requireArguments()).getPosition();
-        }
-
-        mViewModel = new ViewModelProvider(this,
+        AppViewModel mViewModel = new ViewModelProvider(this,
                 new AppViewModelFactory(requireActivity().getApplication() )
         ).get( AppViewModel.class);
 
         mPagerAdapter = new ScreenSlidePagerAdapter( this);
 
-        mBinding = FragmentArticleDetailBinding.inflate( inflater, container, false);
         mBinding.pager.setAdapter( mPagerAdapter);
         mBinding.pager.registerOnPageChangeCallback( new ViewPager2.OnPageChangeCallback() {
             @Override

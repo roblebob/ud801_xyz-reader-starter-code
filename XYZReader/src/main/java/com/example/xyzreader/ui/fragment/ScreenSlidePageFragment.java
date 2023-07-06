@@ -2,6 +2,7 @@ package com.example.xyzreader.ui.fragment;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import java.util.List;
 
 /** This Fragment is the template of the ViewPager2 within the ArticleDetailFragment.
  *  It thereby replaces the old ArticleDetailFragment.
+ *  Whereas the 'id' and 'pos' are passed as arguments to this Fragment, referencing the article
  */
 public class ScreenSlidePageFragment extends Fragment {
     private static final String ID = "id";
@@ -66,17 +68,17 @@ public class ScreenSlidePageFragment extends Fragment {
             mId = getArguments().getInt(ID);
             mPos = getArguments().getInt(POS);
         }
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
         mViewModel = new ViewModelProvider(this,
                 new AppViewModelFactory(requireActivity().getApplication())
         ).get(AppViewModel.class);
 
         mArticleBodyAdapter = new ArticleBodyAdapter();
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mBinding = FragmentScreenSlidePageBinding.inflate( inflater, container, false);
 
         mBinding.articleBodyRv.setAdapter( mArticleBodyAdapter);
         mLinearLayoutManager = new LinearLayoutManager( requireContext(), RecyclerView.VERTICAL, false);
@@ -98,7 +100,7 @@ public class ScreenSlidePageFragment extends Fragment {
             mArticleBodyAdapter.setColor( article.getColor());
         });
         mViewModel.getArticleDetailByIdLive( mId).observe( getViewLifecycleOwner(), detail -> {
-            mArticleBodyAdapter.submit( detail.getBody());
+            mArticleBodyAdapter.update( detail.getBody());
             mBinding.articleBodyRv.post(() -> mBinding.articleBodyRv.scrollToPosition( detail.getBposition()));
             ImageLoaderHelper
                     .getInstance(getActivity())
@@ -138,28 +140,23 @@ public class ScreenSlidePageFragment extends Fragment {
 
 
         /*
-         * copies the current paragraph to the clipboard
+         * copies the current highlighted paragraph to the clipboard, when pressed
          */
         mBinding.shareFab.setOnClickListener(v -> {
             int currentBpos = findBposition();
             RecyclerView.ViewHolder selectedViewHolder = mBinding.articleBodyRv.findViewHolderForAdapterPosition( currentBpos);
-            if (selectedViewHolder == null) {
-                return;
-            }
+            if (selectedViewHolder == null) { return; }
             if (selectedViewHolder instanceof ArticleBodyAdapter.ViewHolder) {
                 String clipboardText = ((ArticleBodyAdapter.ViewHolder) selectedViewHolder).textView.getText().toString();
-                ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(this.getContext().CLIPBOARD_SERVICE);
+                this.getContext();
+                ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService( Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText(String.valueOf( currentBpos), clipboardText);
                 clipboard.setPrimaryClip(clip);
             }
-
         });
 
         return mBinding.getRoot();
     }
-
-
-
 
 
     /**
@@ -173,17 +170,17 @@ public class ScreenSlidePageFragment extends Fragment {
         int bposition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
 
         if (bposition > RecyclerView.NO_POSITION) {
-            return (bposition > 0) ? bposition : 1;
+            return Math.max( 1, bposition);
         }
 
         List<Integer> list = new ArrayList<>();
-        list.add( mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
+        //list.add( mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
         list.add( mLinearLayoutManager.findFirstVisibleItemPosition());
         list.add( mLinearLayoutManager.findLastCompletelyVisibleItemPosition());
         list.add( mLinearLayoutManager.findLastVisibleItemPosition());
         list.removeIf( i -> i == RecyclerView.NO_POSITION);
-        int res = (int) list.stream().mapToDouble(i -> i).average().getAsDouble();
-        return (res > 0) ? res : 1;
+        int res = (int) list.stream().mapToDouble(i -> i).average().orElse(1.0);
+        return Math.max( 1, res);
     }
 
 
@@ -199,4 +196,10 @@ public class ScreenSlidePageFragment extends Fragment {
         mViewModel.updateBposition( mId, findBposition());
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBinding = null;
+    }
 }

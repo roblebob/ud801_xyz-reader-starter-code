@@ -23,7 +23,7 @@ public class ArticleBodyAdapter extends RecyclerView.Adapter<ArticleBodyAdapter.
      * Note, that the 0th item in the list is a blank space, for convenience.
      */
     ArrayList<String> mBodyList = new ArrayList<>();
-    public void submit(List<String> bodyList) {
+    public void update(List<String> bodyList) {
         ArrayList<String> newBodyList = new ArrayList<>( bodyList);
         newBodyList.add( 0, " ");
         ListDiffCallback<String> listDiffCallback = new ListDiffCallback<>( mBodyList, newBodyList);

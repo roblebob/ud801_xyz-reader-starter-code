@@ -5,6 +5,7 @@ package com.example.xyzreader.repository.worker;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.Log;
 
 
@@ -40,10 +41,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * A Worker class that upgrades the database, if needed.
+ */
 public class UpgradeWorker extends Worker {
     public static final String TAG = UpgradeWorker.class.getSimpleName();
+
+    public static final String KEY_UPGRADING = "upgrading";
+    public static final String KEY_POSITION = "position";
+
+    public static final String KEY_CHECKSUM = "checksum";
     private final String SRC_URL;
-    private static final int DEFAULT_COLOR = 0xFF333333;
     private final AppStateDao mAppStateDao;
     private final ArticleDao mArticleDao;
     private final ArticleDetailDao mArticleDetailDao;
@@ -62,11 +70,11 @@ public class UpgradeWorker extends Worker {
     public Result doWork() {
 
         // telling everybody that we started
-        mAppStateDao.insert( new AppState("upgrading", "is upgrading"));
+        mAppStateDao.insert( new AppState( KEY_UPGRADING, "is upgrading"));
 
         // if position is null, then we are upgrading for the first time
         if (mAppStateDao.getPosition() == null) {
-            mAppStateDao.insert( new AppState("position", "0"));
+            mAppStateDao.insert( new AppState(KEY_POSITION, "0"));
         }
 
         // getting the data as json string from the server
@@ -79,17 +87,16 @@ public class UpgradeWorker extends Worker {
             if (string.isEmpty()) { throw new IOException("Empty string"); }
         } catch (IOException e) {
             e.printStackTrace();
-            mAppStateDao.insert( new AppState("upgrading", null));  // telling everybody that we stopped
+            mAppStateDao.insert( new AppState(KEY_UPGRADING, null));  // telling everybody that we stopped
             return Result.failure();
         }
 
         // checking if the data (json response string) has changed by using checksums (CRC32)
         String oldChecksum = mAppStateDao.loadValueByKey("checksum");
         String newChecksum = String.valueOf(getCRC32Checksum(string));
-
         if (oldChecksum != null && oldChecksum.equals(newChecksum)) {
             Log.d(TAG, "nothing to be upgraded");
-            mAppStateDao.insert( new AppState("upgrading", null)); // telling everybody that we stopped
+            mAppStateDao.insert( new AppState(KEY_UPGRADING, null)); // telling everybody that we stopped
             return Result.success();
         }
 
@@ -116,12 +123,12 @@ public class UpgradeWorker extends Worker {
 
 
                 // getting the color from the thumbnail image to individualise article experience
-                int color = DEFAULT_COLOR;
+                int color = Color.TRANSPARENT;
                 try {
                     InputStream inputStream  = new java.net.URL(thumb).openStream();
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     Palette p = Palette.from(bitmap).generate();
-                    color = p.getDarkMutedColor(DEFAULT_COLOR);
+                    color = p.getDarkMutedColor(Color.TRANSPARENT);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -134,17 +141,17 @@ public class UpgradeWorker extends Worker {
 
 
                 // mark that a response having that checksum has been processed
-                mAppStateDao.insert( new AppState("checksum", newChecksum));
+                mAppStateDao.insert( new AppState(KEY_CHECKSUM, newChecksum));
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-            mAppStateDao.insert( new AppState("upgrading", null)); // telling everybody that we stopped
+            mAppStateDao.insert( new AppState(KEY_UPGRADING, null)); // telling everybody that we stopped
             return Result.failure();
         }
 
 
-        mAppStateDao.insert( new AppState("upgrading", null));  // telling everybody that we stopped
+        mAppStateDao.insert( new AppState(KEY_UPGRADING, null));  // telling everybody that we stopped
         return Result.success();
     }
 
