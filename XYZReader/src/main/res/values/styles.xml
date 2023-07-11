@@ -17,7 +17,7 @@
 
 <resources>
 
-    <style name="Theme.XYZReader" parent="@style/Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.XYZReader" parent="@style/Theme.MaterialComponents.NoActionBar.Bridge">
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:fitsSystemWindows">true</item>
@@ -27,9 +27,12 @@
 
         <item name="android:statusBarColor">@android:color/transparent</item>
 
-        <item name="colorPrimary">@color/theme_primary</item>
-        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="colorAccent">@color/theme_accent</item>
+
+<!-- removing color definition because they are not really used anyway and only produces unwanted
+     behaviour when transitioning -->
+<!--        <item name="colorPrimary">@color/theme_primary</item>-->
+<!--        <item name="colorPrimaryDark">@color/theme_primary_dark</item>-->
+<!--        <item name="colorAccent">@color/theme_accent</item>-->
     </style>
 
 
